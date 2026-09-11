@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String         @id @default(uuid())
+  email        String         @unique
+  nom          String?
+  prenom       String?
+  age          String?
+  ville        String?
+  avatarId     String?
+  facultyId    String?        // référence vers Faculty global
+  cree_le      DateTime       @default(now())
+  facultes     Faculte[]      // facultés personnelles (legacy)
+  faculty      Faculty?       @relation(fields: [facultyId], references: [id])
+  abonnement   Subscription?
+  usageMensuel UsageMensuel[]
+}
+
+// ── Facultés / Matières GLOBALES (pré-peuplées, partagées entre tous les users) ──
+
+model Faculty {
+  id       String    @id @default(uuid())
+  code     String    @unique  // ex: "droit", "medecine"
+  nom      String
+  couleur  String
+  icone    String    @default("🏦")
+  subjects Subject[]
+  users    User[]
+}
+
+model Subject {
+  id         String  @id @default(uuid())
+  facultyId  String
+  nom        String
+  couleur    String  @default("#6366f1")
+  faculty    Faculty @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+}
+
+model Faculte {
+  id       String    @id @default(uuid())
+  user_id  String
+  nom      String
+  couleur  String?
+  cree_le  DateTime  @default(now())
+  user     User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  matieres Matiere[]
+}
+
+model Matiere {
+  id         String   @id @default(uuid())
+  faculte_id String
+  nom        String
+  couleur    String?
+  cree_le    DateTime @default(now())
+  faculte    Faculte  @relation(fields: [faculte_id], references: [id], onDelete: Cascade)
+  cours      Cours[]
+}
+
+model Cours {
+  id                   String      @id @default(uuid())
+  matiere_id           String
+  titre                String
+  type                 String      // "texte_colle" | "audio"
+  contenu_brut         String
+  url_audio            String?
+  duree_audio_secondes Int?
+  cree_le              DateTime    @default(now())
+  matiere              Matiere     @relation(fields: [matiere_id], references: [id], onDelete: Cascade)
+  resume               Resume?
+  flashcards           Flashcard[]
+}
+
+model Resume {
+  id          String   @id @default(uuid())
+  cours_id    String   @unique
+  contenu     String
+  points_cles String[]
+  cree_le     DateTime @default(now())
+  cours       Cours    @relation(fields: [cours_id], references: [id], onDelete: Cascade)
+}
+
+model Flashcard {
+  id                String    @id @default(uuid())
+  cours_id          String
+  question          String
+  reponse           String
+  statut            String    @default("nouvelle") // "nouvelle" | "en_cours" | "maitrisee"
+  derniere_revision DateTime?
+  cree_le           DateTime  @default(now())
+  cours             Cours     @relation(fields: [cours_id], references: [id], onDelete: Cascade)
+}
+
+model Subscription {
+  id                     String    @id @default(uuid())
+  user_id                String    @unique
+  plan                   String    // "gratuit" | "etudiant" | "premium"
+  stripe_customer_id     String?   @unique
+  stripe_subscription_id String?   @unique
+  statut                 String    // "active" | "annulee" | "impayee"
+  periode_debut          DateTime?
+  periode_fin            DateTime?
+  user                   User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model UsageMensuel {
+  id                      String @id @default(uuid())
+  user_id                 String
+  mois                    String // Format AAAA-MM
+  minutes_audio_utilisees Int    @default(0)
+  resumes_generes         Int    @default(0)
+  user                    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, mois])
+}
