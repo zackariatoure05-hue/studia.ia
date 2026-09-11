@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(generateLocalFallback(titre, matiere, transcription, plan as keyof typeof PLAN_CONFIG));
     }
 
-    const config = PLAN_CONFIG[plan as keyof typeof PLAN_CONFIG] ?? PLAN_CONFIG.gratuit;
+    const config = PLAN_CONFIG[plan as keyof typeof PLAN_CONFIG] ?? PLAN_CONFIG.decouverte;
 
     const prompt = `Tu es un assistant pédagogique expert pour étudiants universitaires français.
 
@@ -136,7 +136,7 @@ function generateLocalFallback(
   transcription: string,
   plan: keyof typeof PLAN_CONFIG
 ): GeneratedCourse {
-  const config = PLAN_CONFIG[plan] ?? PLAN_CONFIG.gratuit;
+  const config = PLAN_CONFIG[plan] ?? PLAN_CONFIG.decouverte;
   const sentences = transcription
     .split(/(?<=[.!?])\s+/)
     .map(s => s.trim())
