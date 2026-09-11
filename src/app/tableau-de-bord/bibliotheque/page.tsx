@@ -32,7 +32,7 @@ export default function BibliothequePage() {
     if (!document.getElementById(styleId)) {
       const style = document.createElement('style');
       style.id = styleId;
-      style.innerHTML = \`
+      style.innerHTML = `
         @media print {
           body > * { display: none !important; }
           #temp-pdf-wrapper { display: block !important; }
@@ -46,7 +46,7 @@ export default function BibliothequePage() {
           #temp-pdf-wrapper strong { font-weight: 700; }
           @page { margin: 20mm; }
         }
-      \`;
+      `;
       document.head.appendChild(style);
     }
 
@@ -57,14 +57,14 @@ export default function BibliothequePage() {
     // Ou bien on génère un blob textuel (un faux PDF).
     // => Vu qu'on a déjà la logique sur la page du cours, on peut déclencher une navigation et l'impression automatique (complexe).
     // Je vais plutôt injecter un bouton qui redirige vers le cours avec un hash #print
-    router.push(\`/tableau-de-bord/cours/\${c.id}\`);
+    router.push(`/tableau-de-bord/cours/${c.id}`);
   };
 
   const handleDownloadAudio = (c: any) => {
     if (c.url_audio) {
       const a = document.createElement("a");
       a.href = c.url_audio;
-      a.download = \`Audio_\${c.titre.replace(/\\s+/g, "_")}.webm\`;
+      a.download = `Audio_${c.titre.replace(/\s+/g, "_")}.webm`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -74,7 +74,7 @@ export default function BibliothequePage() {
   };
 
   const handleDelete = (id: string, titre: string) => {
-    if (confirm(\`Supprimer définitivement le cours "$\{titre}" et toutes ses flashcards ?\`)) {
+    if (confirm(`Supprimer définitivement le cours "${titre}" et toutes ses flashcards ?`)) {
       deleteCours(id);
     }
   };
@@ -135,7 +135,7 @@ export default function BibliothequePage() {
                 <div className="flex items-center gap-2 mt-auto pt-4 border-t border-border/50">
                   <button
                     title="Aller au cours"
-                    onClick={() => router.push(\`/tableau-de-bord/cours/\${c.id}\`)}
+                    onClick={() => router.push(`/tableau-de-bord/cours/${c.id}`)}
                     className="flex-1 flex items-center justify-center gap-1.5 bg-muted hover:bg-muted/80 text-foreground py-2 px-3 rounded-lg text-sm font-semibold transition-colors"
                   >
                     Voir <ArrowRight size={16} />

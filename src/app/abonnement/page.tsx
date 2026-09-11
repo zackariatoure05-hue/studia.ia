@@ -78,7 +78,7 @@ export default function AbonnementPage() {
     router.push("/tableau-de-bord");
   }
 
-  const isExpired = user?.status === "trial" && new Date(user.trialEndsAt).getTime() < Date.now();
+  const isExpired = user?.status === "trial" && user.trialEndsAt && (new Date(user.trialEndsAt).getTime() < Date.now());
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "oklch(0.98 0.01 276)" }}>
@@ -151,8 +151,8 @@ export default function AbonnementPage() {
                   borderRadius: "24px",
                   padding: "2rem",
                   cursor: "pointer",
-                  border: isSelected ? \`2px solid \${plan.color}\` : "2px solid oklch(0.9 0 0)",
-                  boxShadow: isSelected ? \`0 10px 40px -10px \${plan.color}40\` : "0 4px 6px -1px rgba(0,0,0,0.05)",
+                  border: isSelected ? `2px solid ${plan.color}` : "2px solid oklch(0.9 0 0)",
+                  boxShadow: isSelected ? `0 10px 40px -10px ${plan.color}40` : "0 4px 6px -1px rgba(0,0,0,0.05)",
                   transform: isSelected ? "translateY(-4px)" : "translateY(0)",
                   transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
                   display: "flex", flexDirection: "column"
@@ -169,7 +169,7 @@ export default function AbonnementPage() {
                 )}
                 
                 <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.5rem" }}>
-                  <div style={{ width: "48px", height: "48px", borderRadius: "16px", background: \`\${plan.color}15\`, color: plan.color, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <div style={{ width: "48px", height: "48px", borderRadius: "16px", background: `${plan.color}15`, color: plan.color, display: "flex", alignItems: "center", justifyContent: "center" }}>
                     <Icon size={24} />
                   </div>
                   <div>
@@ -236,12 +236,12 @@ export default function AbonnementPage() {
         </div>
       </main>
 
-      <style dangerouslySetInnerHTML={{ __html: \`
+      <style dangerouslySetInnerHTML={{ __html: `
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(10px); }
           to { opacity: 1; transform: translateY(0); }
         }
-      \`}} />
+      `}} />
     </div>
   );
 }
