@@ -18,6 +18,7 @@
     "@base-ui/react": "^1.7.0",
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",
+    "@supabase/ssr": "latest",
     "@supabase/supabase-js": "^2.109.0",
     "@types/html2pdf.js": "^0.10.0",
     "@types/pg": "^8.23.1",
