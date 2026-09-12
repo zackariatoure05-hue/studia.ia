@@ -143,9 +143,9 @@ function generateLocalFallback(
     .filter(s => s.length > 15);
 
   // Extraire les concepts-clés (mots capitalisés ou après ":")
-  const concepts = [...new Set(
+  const concepts = Array.from(new Set(
     transcription.match(/\b[A-ZÉÀÈÙÂÊÎÔÛ][a-zéàèùâêîôû]{3,}(?:\s+[A-ZÉÀÈÙÂÊÎÔÛ]?[a-zéàèùâêîôû]{2,}){0,3}/g) ?? []
-  )].slice(0, 8);
+  )).slice(0, 8);
 
   const intro = sentences.slice(0, 2).join(" ");
   const body = sentences.slice(2);
