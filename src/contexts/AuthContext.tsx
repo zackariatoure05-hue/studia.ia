@@ -45,6 +45,7 @@ export interface AuthUser {
   age?: string;
   ville?: string;
   avatarId?: string;
+  billingCycle?: "monthly" | "annual";
 }
 
 // Audio limits per plan (in minutes)
@@ -135,6 +136,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           age: found.age,
           ville: found.ville,
           avatarId: found.avatarId,
+          billingCycle: found.billingCycle,
         });
       }
     }
@@ -195,6 +197,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         age: found.age,
         ville: found.ville,
         avatarId: found.avatarId,
+        billingCycle: found.billingCycle,
       });
       return { ok: true };
     },
@@ -272,7 +275,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const audioLimitMinutes = user ? PLAN_AUDIO_LIMITS[user.plan] : PLAN_AUDIO_LIMITS.gratuit;
+  const audioLimitMinutes = user ? PLAN_AUDIO_LIMITS[user.plan] : PLAN_AUDIO_LIMITS.decouverte;
   const audioRemainingMinutes = user
     ? Math.max(0, audioLimitMinutes - user.audioUsedMinutes)
     : 0;
