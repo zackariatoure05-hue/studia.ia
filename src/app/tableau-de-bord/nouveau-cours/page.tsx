@@ -182,7 +182,7 @@ export default function NouveauCoursPage() {
         ? (transcription.trim() || (audioFile ? "Transcription simulée à partir d'un fichier importé. Le système nerveux central est le centre de commande. Il traite les informations." : ""))
         : contenu.trim();
 
-      const matiereNom = matieres.find(m => m.id === matiereId)?.nom || "";
+      const matiereNom = subjects.find((m: ApiSubject) => m.id === matiereId)?.nom || "";
       const plan = user?.plan || "gratuit";
 
       // Appel de notre API d'IA
