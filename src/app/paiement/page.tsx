@@ -56,7 +56,7 @@ export default function PaiementPage() {
     // Simulation d'un paiement
     await new Promise((r) => setTimeout(r, 1500));
     setLoading(false);
-    setPlan(plan);
+    setPlan(planParam);
     router.push("/tableau-de-bord");
   }
 
