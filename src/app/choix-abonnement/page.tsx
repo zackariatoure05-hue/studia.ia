@@ -117,7 +117,7 @@ export default function ChoixAbonnementPage() {
             return (
               <div
                 key={plan.id}
-                onClick={() => setSelectedPlan(plan.id)}
+                onClick={() => setSelectedPlan(plan.id as Plan)}
                 className={`relative bg-white rounded-3xl p-8 cursor-pointer transition-all duration-300 border-2 flex flex-col ${
                   isSelected 
                     ? "border-indigo-600 shadow-2xl shadow-indigo-600/20 scale-105" 
