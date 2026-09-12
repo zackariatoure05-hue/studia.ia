@@ -190,6 +190,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         nom: found.nom,
         email: found.email,
         plan: found.plan,
+        status: found.status || "trial",
+        trialEndsAt: found.trialEndsAt || new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
         audioUsedMinutes: found.audioUsedMinutes,
         hasCompletedOnboarding: found.hasCompletedOnboarding ?? false,
         faculteId: found.faculteId,
