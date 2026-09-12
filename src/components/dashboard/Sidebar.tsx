@@ -4,14 +4,14 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useData } from "@/contexts/DataContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { 
-  LayoutDashboard, 
-  Target, 
-  Settings, 
-  Plus, 
-  BookOpen, 
+import {
+  LayoutDashboard,
+  Target,
+  Settings,
+  Plus,
+  BookOpen,
   LogOut,
-  GraduationCap
+  GraduationCap,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -29,20 +29,21 @@ export default function Sidebar() {
   const { user, logout } = useAuth();
 
   const faculteId = user?.faculteId;
-  const userFaculte = facultes.find(f => f.id === faculteId);
-  const userMatieres = matieres.filter(m => m.faculte_id === faculteId);
+  const userFaculte = facultes.find((f) => f.id === faculteId);
+  const userMatieres = matieres.filter((m) => m.faculte_id === faculteId);
 
   const displayName = user?.prenom || user?.nom || "Étudiant";
   const displayPlan = user?.plan
-    ? ({ decouverte: "Plan Découverte", etudiant: "Plan Étudiant", premium: "Plan Premium" }[user.plan] ?? "Plan Découverte")
+    ? ({ decouverte: "Plan Découverte", etudiant: "Plan Étudiant", premium: "Plan Premium" }[
+        user.plan
+      ] ?? "Plan Découverte")
     : "Plan Découverte";
-    
+
   // On utilise l'initiale plutôt qu'une image potentiellement manquante
   const initials = displayName.charAt(0).toUpperCase();
 
   return (
     <aside className="hidden md:flex flex-col w-[260px] shrink-0 bg-white border-r border-border h-screen sticky top-0">
-      
       {/* Logo */}
       <div className="p-5 border-b border-border/50">
         <Link href="/" className="flex items-center gap-2.5 no-underline text-foreground group">
@@ -75,8 +76,8 @@ export default function Sidebar() {
             <Link key={item.href} href={item.href} className="no-underline">
               <div
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  active 
-                    ? "bg-primary/10 text-primary" 
+                  active
+                    ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 }`}
               >
@@ -123,12 +124,15 @@ export default function Sidebar() {
                 <Link key={mat.id} href={matHref} className="no-underline">
                   <div
                     className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors overflow-hidden ${
-                      matActive 
-                        ? "bg-primary/5 text-primary font-semibold" 
+                      matActive
+                        ? "bg-primary/5 text-primary font-semibold"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground font-medium"
                     }`}
                   >
-                    <BookOpen size={16} className={matActive ? "text-primary" : "text-muted-foreground/70"} />
+                    <BookOpen
+                      size={16}
+                      className={matActive ? "text-primary" : "text-muted-foreground/70"}
+                    />
                     <span className="truncate">{mat.nom}</span>
                   </div>
                 </Link>
@@ -144,18 +148,17 @@ export default function Sidebar() {
           <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold overflow-hidden border border-primary/20 shrink-0">
             <span className="text-lg">{initials}</span>
           </div>
-          
+
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-sm text-foreground truncate">
-              {displayName}
-            </p>
-            <p className="text-xs text-primary font-medium truncate">
-              {displayPlan}
-            </p>
+            <p className="font-semibold text-sm text-foreground truncate">{displayName}</p>
+            <p className="text-xs text-primary font-medium truncate">{displayPlan}</p>
           </div>
-          
+
           <button
-            onClick={() => { logout(); router.push("/"); }}
+            onClick={() => {
+              logout();
+              router.push("/");
+            }}
             title="Se déconnecter"
             className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors shrink-0"
           >

@@ -1,6 +1,6 @@
-import { Pool } from 'pg'
-import { PrismaPg } from '@prisma/adapter-pg'
-import { PrismaClient } from '@prisma/client'
+import { Pool } from "pg";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "@prisma/client";
 
 let connectionString = process.env.DATABASE_URL || "";
 if (connectionString.startsWith("prisma+postgres://")) {
@@ -12,6 +12,6 @@ if (connectionString.startsWith("prisma+postgres://")) {
   }
 }
 
-const pool = new Pool({ connectionString })
-const adapter = new PrismaPg(pool)
-export const prisma = new PrismaClient({ adapter })
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+export const prisma = new PrismaClient({ adapter });

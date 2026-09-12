@@ -11,7 +11,8 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: "StudIA — Révise mieux, retiens plus",
-  description: "L'IA qui transforme tes cours en résumés et flashcards. Transcription en direct, révision intelligente.",
+  description:
+    "L'IA qui transforme tes cours en résumés et flashcards. Transcription en direct, révision intelligente.",
 };
 
 export default function RootLayout({

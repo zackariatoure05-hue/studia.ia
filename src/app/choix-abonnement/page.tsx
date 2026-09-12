@@ -14,11 +14,7 @@ const PLANS = [
     priceAnnualTotal: "19,99€",
     icon: Sparkles,
     color: "oklch(0.6 0.15 250)",
-    features: [
-      "4 heures d'audio / mois",
-      "Résumés standards",
-      "Flashcards limitées",
-    ]
+    features: ["4 heures d'audio / mois", "Résumés standards", "Flashcards limitées"],
   },
   {
     id: "etudiant",
@@ -34,7 +30,7 @@ const PLANS = [
       "Résumés approfondis",
       "Flashcards détaillées",
       "Génération illimitée (texte)",
-    ]
+    ],
   },
   {
     id: "premium",
@@ -50,8 +46,8 @@ const PLANS = [
       "Mode révision avec tous profils d'IA",
       "Support prioritaire",
       "Export Notion & Anki",
-    ]
-  }
+    ],
+  },
 ];
 
 export default function ChoixAbonnementPage() {
@@ -63,13 +59,13 @@ export default function ChoixAbonnementPage() {
 
   async function handleStartTrial() {
     setLoading(true);
-    updateUser({ 
+    updateUser({
       plan: selectedPlan as any,
-      billingCycle: isAnnual ? "annual" : "monthly"
+      billingCycle: isAnnual ? "annual" : "monthly",
     });
-    
-    await new Promise(r => setTimeout(r, 600));
-    
+
+    await new Promise((r) => setTimeout(r, 600));
+
     // Redirige vers le checkout (paywall)
     router.push("/checkout");
   }
@@ -78,7 +74,9 @@ export default function ChoixAbonnementPage() {
     <div className="min-h-screen flex flex-col bg-slate-50">
       <header className="p-6 md:px-12 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">S</div>
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
+            S
+          </div>
           <span className="text-xl font-extrabold tracking-tight text-slate-900">StudIA</span>
         </div>
       </header>
@@ -89,22 +87,36 @@ export default function ChoixAbonnementPage() {
             <Sparkles className="w-4 h-4" /> Ton compte est créé !
           </div>
           <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">
-            Choisis ton plan pour démarrer<br />ton abonnement.
+            Choisis ton plan pour démarrer
+            <br />
+            ton abonnement.
           </h1>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-10">
-            Sélectionne le niveau d'approfondissement qui te correspond et passe à la vitesse supérieure.
+            Sélectionne le niveau d'approfondissement qui te correspond et passe à la vitesse
+            supérieure.
           </p>
 
           <div className="flex items-center justify-center gap-4 mb-12">
-            <span className={`text-sm font-semibold ${!isAnnual ? "text-slate-900" : "text-slate-500"}`}>Mensuel</span>
-            <button 
+            <span
+              className={`text-sm font-semibold ${!isAnnual ? "text-slate-900" : "text-slate-500"}`}
+            >
+              Mensuel
+            </span>
+            <button
               onClick={() => setIsAnnual(!isAnnual)}
               className="relative w-16 h-8 rounded-full bg-indigo-600 transition-colors focus:outline-none"
             >
-              <div className={`absolute top-1 left-1 bg-white w-6 h-6 rounded-full transition-transform ${isAnnual ? "translate-x-8" : ""}`}></div>
+              <div
+                className={`absolute top-1 left-1 bg-white w-6 h-6 rounded-full transition-transform ${isAnnual ? "translate-x-8" : ""}`}
+              ></div>
             </button>
-            <span className={`text-sm font-semibold flex items-center gap-2 ${isAnnual ? "text-slate-900" : "text-slate-500"}`}>
-              Annuel <span className="bg-emerald-100 text-emerald-700 text-xs px-2 py-0.5 rounded-full">-30%</span>
+            <span
+              className={`text-sm font-semibold flex items-center gap-2 ${isAnnual ? "text-slate-900" : "text-slate-500"}`}
+            >
+              Annuel{" "}
+              <span className="bg-emerald-100 text-emerald-700 text-xs px-2 py-0.5 rounded-full">
+                -30%
+              </span>
             </span>
           </div>
         </div>
@@ -113,14 +125,14 @@ export default function ChoixAbonnementPage() {
           {PLANS.map((plan) => {
             const isSelected = selectedPlan === plan.id;
             const Icon = plan.icon;
-            
+
             return (
               <div
                 key={plan.id}
                 onClick={() => setSelectedPlan(plan.id as Plan)}
                 className={`relative bg-white rounded-3xl p-8 cursor-pointer transition-all duration-300 border-2 flex flex-col ${
-                  isSelected 
-                    ? "border-indigo-600 shadow-2xl shadow-indigo-600/20 scale-105" 
+                  isSelected
+                    ? "border-indigo-600 shadow-2xl shadow-indigo-600/20 scale-105"
                     : "border-slate-100 shadow-sm hover:border-slate-300 hover:shadow-md"
                 }`}
               >
@@ -129,16 +141,18 @@ export default function ChoixAbonnementPage() {
                     Le plus choisi
                   </div>
                 )}
-                
+
                 <div className="flex items-center gap-4 mb-6">
-                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600'}`}>
+                  <div
+                    className={`w-12 h-12 rounded-2xl flex items-center justify-center ${isSelected ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-600"}`}
+                  >
                     <Icon className="w-6 h-6" />
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-slate-900">{plan.name}</h3>
                   </div>
                 </div>
-                
+
                 <div className="mb-8">
                   <div className="flex items-end gap-1">
                     <span className="text-4xl font-extrabold text-slate-900 tracking-tight">
@@ -152,11 +166,13 @@ export default function ChoixAbonnementPage() {
                     </div>
                   )}
                 </div>
-                
+
                 <div className="flex-1 space-y-4">
                   {plan.features.map((feature, i) => (
                     <div key={i} className="flex items-start gap-3">
-                      <Check className={`w-5 h-5 shrink-0 ${isSelected ? 'text-indigo-600' : 'text-slate-400'}`} />
+                      <Check
+                        className={`w-5 h-5 shrink-0 ${isSelected ? "text-indigo-600" : "text-slate-400"}`}
+                      />
                       <span className="text-slate-700 font-medium">{feature}</span>
                     </div>
                   ))}
@@ -176,7 +192,8 @@ export default function ChoixAbonnementPage() {
               "Préparation..."
             ) : (
               <>
-                S'abonner à {PLANS.find(p => p.id === selectedPlan)?.name} <ChevronRight className="w-6 h-6" />
+                S'abonner à {PLANS.find((p) => p.id === selectedPlan)?.name}{" "}
+                <ChevronRight className="w-6 h-6" />
               </>
             )}
           </button>

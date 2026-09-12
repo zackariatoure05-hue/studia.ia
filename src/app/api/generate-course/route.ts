@@ -3,8 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 // ── Types ──────────────────────────────────────────────────────────────────
 
 export type GeneratedCourse = {
-  resume: string;        // Markdown complet, multi-sections
-  pointsCles: string[];  // 5-10 points clés
+  resume: string; // Markdown complet, multi-sections
+  pointsCles: string[]; // 5-10 points clés
   flashcards: { question: string; reponse: string }[];
 };
 
@@ -20,14 +20,18 @@ const PLAN_CONFIG = {
   etudiant: {
     resumeSections: 6,
     flashcardsCount: 12,
-    depthInstruction: "Fais un résumé approfondi en 5-6 sections avec sous-sections, exemples détaillés et mise en contexte académique.",
-    enrichInstruction: "Enrichis avec des connaissances académiques pertinentes au-delà du contenu brut : théories associées, auteurs/chercheurs clés, applications pratiques, comparaisons et nuances importantes pour l'examen.",
+    depthInstruction:
+      "Fais un résumé approfondi en 5-6 sections avec sous-sections, exemples détaillés et mise en contexte académique.",
+    enrichInstruction:
+      "Enrichis avec des connaissances académiques pertinentes au-delà du contenu brut : théories associées, auteurs/chercheurs clés, applications pratiques, comparaisons et nuances importantes pour l'examen.",
   },
   premium: {
     resumeSections: 8,
     flashcardsCount: 20,
-    depthInstruction: "Fais un résumé exhaustif niveau master en 7-8 sections avec sous-sections détaillées, références académiques, analyses critiques et perspectives.",
-    enrichInstruction: "Enrichis massivement avec : théories avancées, débats académiques actuels, études de cas, contre-exemples, liens interdisciplinaires, méthodes d'application en examen et tout ce qu'un étudiant brillant doit maîtriser sur ce sujet.",
+    depthInstruction:
+      "Fais un résumé exhaustif niveau master en 7-8 sections avec sous-sections détaillées, références académiques, analyses critiques et perspectives.",
+    enrichInstruction:
+      "Enrichis massivement avec : théories avancées, débats académiques actuels, études de cas, contre-exemples, liens interdisciplinaires, méthodes d'application en examen et tout ce qu'un étudiant brillant doit maîtriser sur ce sujet.",
   },
 };
 
@@ -44,7 +48,9 @@ export async function POST(req: NextRequest) {
     const apiKey = process.env.AI_API_KEY;
     if (!apiKey || apiKey.includes("votre-cle")) {
       // Pas de clé API : génération locale de qualité
-      return NextResponse.json(generateLocalFallback(titre, matiere, transcription, plan as keyof typeof PLAN_CONFIG));
+      return NextResponse.json(
+        generateLocalFallback(titre, matiere, transcription, plan as keyof typeof PLAN_CONFIG)
+      );
     }
 
     const config = PLAN_CONFIG[plan as keyof typeof PLAN_CONFIG] ?? PLAN_CONFIG.decouverte;
@@ -102,7 +108,9 @@ ${config.enrichInstruction}
     if (!response.ok) {
       const err = await response.text();
       console.error("Gemini API error:", err);
-      return NextResponse.json(generateLocalFallback(titre, matiere, transcription, plan as keyof typeof PLAN_CONFIG));
+      return NextResponse.json(
+        generateLocalFallback(titre, matiere, transcription, plan as keyof typeof PLAN_CONFIG)
+      );
     }
 
     const data = await response.json();
@@ -117,7 +125,9 @@ ${config.enrichInstruction}
       if (jsonMatch) {
         parsed = JSON.parse(jsonMatch[1]);
       } else {
-        return NextResponse.json(generateLocalFallback(titre, matiere, transcription, plan as keyof typeof PLAN_CONFIG));
+        return NextResponse.json(
+          generateLocalFallback(titre, matiere, transcription, plan as keyof typeof PLAN_CONFIG)
+        );
       }
     }
 
@@ -139,13 +149,17 @@ function generateLocalFallback(
   const config = PLAN_CONFIG[plan] ?? PLAN_CONFIG.decouverte;
   const sentences = transcription
     .split(/(?<=[.!?])\s+/)
-    .map(s => s.trim())
-    .filter(s => s.length > 15);
+    .map((s) => s.trim())
+    .filter((s) => s.length > 15);
 
   // Extraire les concepts-clés (mots capitalisés ou après ":")
-  const concepts = Array.from(new Set(
-    transcription.match(/\b[A-ZÉÀÈÙÂÊÎÔÛ][a-zéàèùâêîôû]{3,}(?:\s+[A-ZÉÀÈÙÂÊÎÔÛ]?[a-zéàèùâêîôû]{2,}){0,3}/g) ?? []
-  )).slice(0, 8);
+  const concepts = Array.from(
+    new Set(
+      transcription.match(
+        /\b[A-ZÉÀÈÙÂÊÎÔÛ][a-zéàèùâêîôû]{3,}(?:\s+[A-ZÉÀÈÙÂÊÎÔÛ]?[a-zéàèùâêîôû]{2,}){0,3}/g
+      ) ?? []
+    )
+  ).slice(0, 8);
 
   const intro = sentences.slice(0, 2).join(" ");
   const body = sentences.slice(2);
@@ -155,9 +169,14 @@ function generateLocalFallback(
   resumeContent += `## Introduction\n${intro || "Ce cours porte sur " + titre + " dans le cadre de la matière " + matiere + "."}\n\n`;
 
   const sectionTitles = [
-    "Concepts fondamentaux", "Mécanismes et principes", "Applications et exemples",
-    "Points clés à retenir", "Analyse approfondie", "Perspectives et enjeux",
-    "Comparaisons et nuances", "Synthèse"
+    "Concepts fondamentaux",
+    "Mécanismes et principes",
+    "Applications et exemples",
+    "Points clés à retenir",
+    "Analyse approfondie",
+    "Perspectives et enjeux",
+    "Comparaisons et nuances",
+    "Synthèse",
   ];
 
   for (let i = 0; i < config.resumeSections - 1 && body.length > 0; i++) {
@@ -168,18 +187,18 @@ function generateLocalFallback(
   }
 
   const pointsCles = sentences
-    .filter(s => s.length > 20)
+    .filter((s) => s.length > 20)
     .slice(0, 8)
-    .map(s => s.length > 100 ? s.slice(0, 97) + "..." : s);
+    .map((s) => (s.length > 100 ? s.slice(0, 97) + "..." : s));
 
   // Générer des flashcards basées sur le contenu réel
   const flashcards: { question: string; reponse: string }[] = [];
-  const fcSentences = sentences.filter(s => s.length > 20);
+  const fcSentences = sentences.filter((s) => s.length > 20);
 
   if (concepts.length > 0) {
     flashcards.push({
       question: `Qu'est-ce que "${concepts[0]}" dans le contexte de ${titre} ?`,
-      reponse: fcSentences.find(s => s.includes(concepts[0]))?.slice(0, 200) || concepts[0],
+      reponse: fcSentences.find((s) => s.includes(concepts[0]))?.slice(0, 200) || concepts[0],
     });
   }
 

@@ -21,14 +21,14 @@ const RecordingContext = createContext<RecordingContextType | undefined>(undefin
 
 export function RecordingProvider({ children }: { children: React.ReactNode }) {
   const { audioLimitMinutes, audioRemainingMinutes } = useAuth();
-  
+
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [transcription, setTranscription] = useState("");
   const [interimTranscription, setInterimTranscription] = useState("");
   const [recordedAudioBlob, setRecordedAudioBlob] = useState<Blob | null>(null);
-  
+
   const recognitionRef = useRef<any>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<BlobPart[]>([]);
@@ -45,10 +45,12 @@ export function RecordingProvider({ children }: { children: React.ReactNode }) {
 
   const startRecording = async () => {
     if (audioLimitMinutes !== Infinity && audioRemainingMinutes <= 0) {
-      alert(`Votre quota de transcription audio est épuisé pour ce mois (${audioLimitMinutes} min). Mettez à niveau votre formule.`);
+      alert(
+        `Votre quota de transcription audio est épuisé pour ce mois (${audioLimitMinutes} min). Mettez à niveau votre formule.`
+      );
       return;
     }
-    
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
@@ -58,7 +60,7 @@ export function RecordingProvider({ children }: { children: React.ReactNode }) {
           channelCount: 1,
           sampleRate: 48000,
           sampleSize: 16,
-        }
+        },
       });
 
       const audioContext = new window.AudioContext();
@@ -69,7 +71,7 @@ export function RecordingProvider({ children }: { children: React.ReactNode }) {
       source.connect(gainNode);
       gainNode.connect(destination);
       const boostedStream = destination.stream;
-      
+
       const mediaRecorder = new MediaRecorder(boostedStream);
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
@@ -81,35 +83,38 @@ export function RecordingProvider({ children }: { children: React.ReactNode }) {
       };
 
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
         setRecordedAudioBlob(audioBlob);
-        stream.getTracks().forEach(track => track.stop());
+        stream.getTracks().forEach((track) => track.stop());
       };
 
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      const SpeechRecognition =
+        (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (!SpeechRecognition) {
-        alert("Votre navigateur ne supporte pas la reconnaissance vocale (essayez Chrome ou Safari).");
+        alert(
+          "Votre navigateur ne supporte pas la reconnaissance vocale (essayez Chrome ou Safari)."
+        );
         return;
       }
 
       const recognition = new SpeechRecognition();
       recognition.continuous = true;
       recognition.interimResults = true;
-      recognition.lang = 'fr-FR';
+      recognition.lang = "fr-FR";
 
       recognition.onresult = (event: any) => {
-        let finalTranscript = '';
-        let interimTranscript = '';
-        
+        let finalTranscript = "";
+        let interimTranscript = "";
+
         for (let i = event.resultIndex; i < event.results.length; i++) {
           const transcript = event.results[i][0].transcript;
           if (event.results[i].isFinal) {
-            finalTranscript += transcript + ' ';
+            finalTranscript += transcript + " ";
           } else {
             interimTranscript += transcript;
           }
         }
-        
+
         setTranscription((prev) => prev + finalTranscript);
         setInterimTranscription(interimTranscript);
       };
@@ -132,7 +137,7 @@ export function RecordingProvider({ children }: { children: React.ReactNode }) {
       recognitionRef.current = recognition;
       recognition.start();
       mediaRecorder.start();
-      
+
       isRecordingRef.current = true;
       isPausedRef.current = false;
       setIsRecording(true);
@@ -182,10 +187,14 @@ export function RecordingProvider({ children }: { children: React.ReactNode }) {
     if (recognitionRef.current) {
       recognitionRef.current.onend = () => {
         if (recognitionRef.current && isRecordingRef.current && !isPausedRef.current) {
-          try { recognitionRef.current.start(); } catch (e) {}
+          try {
+            recognitionRef.current.start();
+          } catch (e) {}
         }
       };
-      try { recognitionRef.current.start(); } catch (e) {}
+      try {
+        recognitionRef.current.start();
+      } catch (e) {}
     }
     // Resume media recorder if paused
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === "paused") {
@@ -204,19 +213,21 @@ export function RecordingProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <RecordingContext.Provider value={{
-      isRecording,
-      isPaused,
-      recordingTime,
-      transcription,
-      interimTranscription,
-      recordedAudioBlob,
-      startRecording,
-      stopRecording,
-      pauseRecording,
-      resumeRecording,
-      resetRecording
-    }}>
+    <RecordingContext.Provider
+      value={{
+        isRecording,
+        isPaused,
+        recordingTime,
+        transcription,
+        interimTranscription,
+        recordedAudioBlob,
+        startRecording,
+        stopRecording,
+        pauseRecording,
+        resumeRecording,
+        resetRecording,
+      }}
+    >
       {children}
     </RecordingContext.Provider>
   );

@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from "react";
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import {
   MOCK_COURS,
   MOCK_FACULTES,
@@ -42,8 +35,27 @@ type DataCtx = {
 
   // Cours
   addCours: (matiere_id: string, titre: string, type: "texte_colle" | "audio") => Cours;
-  addCoursTexte: (matiere_id: string, titre: string, contenu: string, aiGenerated?: { resume: string; pointsCles: string[]; flashcards: {question:string;reponse:string}[] }) => Cours;
-  addCoursAudio: (matiere_id: string, titre: string, transcription: string, durationSec?: number, aiGenerated?: { resume: string; pointsCles: string[]; flashcards: {question:string;reponse:string}[] }) => Cours;
+  addCoursTexte: (
+    matiere_id: string,
+    titre: string,
+    contenu: string,
+    aiGenerated?: {
+      resume: string;
+      pointsCles: string[];
+      flashcards: { question: string; reponse: string }[];
+    }
+  ) => Cours;
+  addCoursAudio: (
+    matiere_id: string,
+    titre: string,
+    transcription: string,
+    durationSec?: number,
+    aiGenerated?: {
+      resume: string;
+      pointsCles: string[];
+      flashcards: { question: string; reponse: string }[];
+    }
+  ) => Cours;
   deleteCours: (id: string) => void;
 
   // Flashcards
@@ -88,7 +100,13 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
   // ── Facultés ──
   const addFaculte = useCallback((nom: string, couleur: string): Faculte => {
-    const f: Faculte = { id: uid("fac"), user_id: "usr_1", nom, couleur, cree_le: new Date().toISOString() };
+    const f: Faculte = {
+      id: uid("fac"),
+      user_id: "usr_1",
+      nom,
+      couleur,
+      cree_le: new Date().toISOString(),
+    };
     setFacultes((prev) => [...prev, f]);
     return f;
   }, []);
@@ -103,7 +121,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setMatieres((prev) => {
       const idsToRemove = prev.filter((m) => m.faculte_id === id).map((m) => m.id);
       setCours((prevC) => {
-        const coursToRemove = prevC.filter((c) => idsToRemove.includes(c.matiere_id)).map((c) => c.id);
+        const coursToRemove = prevC
+          .filter((c) => idsToRemove.includes(c.matiere_id))
+          .map((c) => c.id);
         setResumes((prevR) => prevR.filter((r) => !coursToRemove.includes(r.cours_id)));
         setFlashcards((prevF) => prevF.filter((f) => !coursToRemove.includes(f.cours_id)));
         return prevC.filter((c) => !idsToRemove.includes(c.matiere_id));
@@ -114,7 +134,13 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
   // ── Matières ──
   const addMatiere = useCallback((faculte_id: string, nom: string, couleur: string): Matiere => {
-    const m: Matiere = { id: uid("mat"), faculte_id, nom, couleur, cree_le: new Date().toISOString() };
+    const m: Matiere = {
+      id: uid("mat"),
+      faculte_id,
+      nom,
+      couleur,
+      cree_le: new Date().toISOString(),
+    };
     setMatieres((prev) => [...prev, m]);
     return m;
   }, []);
@@ -134,100 +160,164 @@ export function DataProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // ── Cours ──
-  const addCours = useCallback((matiere_id: string, titre: string, type: "texte_colle" | "audio"): Cours => {
-    const c: Cours = {
-      id: uid("crs"), matiere_id, titre, type,
-      contenu_brut: "",
-      cree_le: new Date().toISOString(),
-    };
-    setCours((prev) => [...prev, c]);
-    return c;
-  }, []);
+  const addCours = useCallback(
+    (matiere_id: string, titre: string, type: "texte_colle" | "audio"): Cours => {
+      const c: Cours = {
+        id: uid("crs"),
+        matiere_id,
+        titre,
+        type,
+        contenu_brut: "",
+        cree_le: new Date().toISOString(),
+      };
+      setCours((prev) => [...prev, c]);
+      return c;
+    },
+    []
+  );
 
   const deleteCours = useCallback((id: string) => {
-    setCours(prev => prev.filter(c => c.id !== id));
-    setResumes(prev => prev.filter(r => r.cours_id !== id));
-    setFlashcards(prev => prev.filter(f => f.cours_id !== id));
+    setCours((prev) => prev.filter((c) => c.id !== id));
+    setResumes((prev) => prev.filter((r) => r.cours_id !== id));
+    setFlashcards((prev) => prev.filter((f) => f.cours_id !== id));
   }, []);
 
-  const updateFlashcardStatus = useCallback((id: string, statut: "nouvelle" | "en_cours" | "maitrisee") => {
-    setFlashcards((prev) => prev.map((f) => (f.id === id ? { ...f, statut } : f)));
-  }, []);
+  const updateFlashcardStatus = useCallback(
+    (id: string, statut: "nouvelle" | "en_cours" | "maitrisee") => {
+      setFlashcards((prev) => prev.map((f) => (f.id === id ? { ...f, statut } : f)));
+    },
+    []
+  );
 
-  const addCoursTexte = useCallback((matiere_id: string, titre: string, contenu: string, aiGenerated?: { resume: string; pointsCles: string[]; flashcards: {question:string;reponse:string}[] }): Cours => {
-    const c: Cours = {
-      id: uid("crs"), matiere_id, titre, type: "texte_colle",
-      contenu_brut: contenu,
-      cree_le: new Date().toISOString(),
-    };
-    setCours((prev) => [...prev, c]);
+  const addCoursTexte = useCallback(
+    (
+      matiere_id: string,
+      titre: string,
+      contenu: string,
+      aiGenerated?: {
+        resume: string;
+        pointsCles: string[];
+        flashcards: { question: string; reponse: string }[];
+      }
+    ): Cours => {
+      const c: Cours = {
+        id: uid("crs"),
+        matiere_id,
+        titre,
+        type: "texte_colle",
+        contenu_brut: contenu,
+        cree_le: new Date().toISOString(),
+      };
+      setCours((prev) => [...prev, c]);
 
-    const sentences = contenu.split(/[.?!]/).filter(s => s.trim().length > 10);
-    const resume: Resume = {
-      id: uid("res"),
-      cours_id: c.id,
-      contenu: aiGenerated?.resume ?? sentences.slice(0, 3).join(". ") + ".",
-      points_cles: aiGenerated?.pointsCles ?? sentences.slice(0, 5).map(s => s.trim()),
-      cree_le: new Date().toISOString()
-    };
-    setResumes(prev => [...prev, resume]);
+      const sentences = contenu.split(/[.?!]/).filter((s) => s.trim().length > 10);
+      const resume: Resume = {
+        id: uid("res"),
+        cours_id: c.id,
+        contenu: aiGenerated?.resume ?? sentences.slice(0, 3).join(". ") + ".",
+        points_cles: aiGenerated?.pointsCles ?? sentences.slice(0, 5).map((s) => s.trim()),
+        cree_le: new Date().toISOString(),
+      };
+      setResumes((prev) => [...prev, resume]);
 
-    const newFlashcards: Flashcard[] = (aiGenerated?.flashcards ?? sentences.slice(0, 5).map((s, i) => ({ question: `Question ${i + 1} sur ce cours ?`, reponse: s.trim() }))).map(fc => ({
-      id: uid("fc"),
-      cours_id: c.id,
-      question: fc.question,
-      reponse: fc.reponse,
-      statut: "nouvelle" as const,
-      cree_le: new Date().toISOString()
-    }));
-    setFlashcards(prev => [...prev, ...newFlashcards]);
+      const newFlashcards: Flashcard[] = (
+        aiGenerated?.flashcards ??
+        sentences
+          .slice(0, 5)
+          .map((s, i) => ({ question: `Question ${i + 1} sur ce cours ?`, reponse: s.trim() }))
+      ).map((fc) => ({
+        id: uid("fc"),
+        cours_id: c.id,
+        question: fc.question,
+        reponse: fc.reponse,
+        statut: "nouvelle" as const,
+        cree_le: new Date().toISOString(),
+      }));
+      setFlashcards((prev) => [...prev, ...newFlashcards]);
 
-    return c;
-  }, []);
+      return c;
+    },
+    []
+  );
 
-  const addCoursAudio = useCallback((matiere_id: string, titre: string, transcription: string, durationSec: number = 0, aiGenerated?: { resume: string; pointsCles: string[]; flashcards: {question:string;reponse:string}[] }): Cours => {
-    const c: Cours = {
-      id: uid("crs"), matiere_id, titre, type: "audio",
-      contenu_brut: transcription,
-      duree_audio_secondes: durationSec,
-      cree_le: new Date().toISOString(),
-    };
-    setCours((prev) => [...prev, c]);
+  const addCoursAudio = useCallback(
+    (
+      matiere_id: string,
+      titre: string,
+      transcription: string,
+      durationSec: number = 0,
+      aiGenerated?: {
+        resume: string;
+        pointsCles: string[];
+        flashcards: { question: string; reponse: string }[];
+      }
+    ): Cours => {
+      const c: Cours = {
+        id: uid("crs"),
+        matiere_id,
+        titre,
+        type: "audio",
+        contenu_brut: transcription,
+        duree_audio_secondes: durationSec,
+        cree_le: new Date().toISOString(),
+      };
+      setCours((prev) => [...prev, c]);
 
-    const sentences = transcription.split(/[.?!]/).filter(s => s.trim().length > 10);
-    const resume: Resume = {
-      id: uid("res"),
-      cours_id: c.id,
-      contenu: aiGenerated?.resume ?? sentences.slice(0, 3).join(". ") + (sentences.length ? "." : ""),
-      points_cles: aiGenerated?.pointsCles ?? sentences.slice(0, 5).map(s => s.trim()),
-      cree_le: new Date().toISOString()
-    };
-    setResumes(prev => [...prev, resume]);
+      const sentences = transcription.split(/[.?!]/).filter((s) => s.trim().length > 10);
+      const resume: Resume = {
+        id: uid("res"),
+        cours_id: c.id,
+        contenu:
+          aiGenerated?.resume ?? sentences.slice(0, 3).join(". ") + (sentences.length ? "." : ""),
+        points_cles: aiGenerated?.pointsCles ?? sentences.slice(0, 5).map((s) => s.trim()),
+        cree_le: new Date().toISOString(),
+      };
+      setResumes((prev) => [...prev, resume]);
 
-    const newFlashcards: Flashcard[] = (aiGenerated?.flashcards ?? sentences.slice(0, 5).map((s, i) => ({ question: `Question audio ${i + 1} ?`, reponse: s.trim() }))).map(fc => ({
-      id: uid("fc"),
-      cours_id: c.id,
-      question: fc.question,
-      reponse: fc.reponse,
-      statut: "nouvelle" as const,
-      cree_le: new Date().toISOString()
-    }));
-    setFlashcards(prev => [...prev, ...newFlashcards]);
+      const newFlashcards: Flashcard[] = (
+        aiGenerated?.flashcards ??
+        sentences
+          .slice(0, 5)
+          .map((s, i) => ({ question: `Question audio ${i + 1} ?`, reponse: s.trim() }))
+      ).map((fc) => ({
+        id: uid("fc"),
+        cours_id: c.id,
+        question: fc.question,
+        reponse: fc.reponse,
+        statut: "nouvelle" as const,
+        cree_le: new Date().toISOString(),
+      }));
+      setFlashcards((prev) => [...prev, ...newFlashcards]);
 
-    return c;
-  }, []);
-
-
+      return c;
+    },
+    []
+  );
 
   return (
-    <DataContext.Provider value={{
-      facultes, matieres, cours, resumes, flashcards,
-      addFaculte, renameFaculte, deleteFaculte,
-      addMatiere, renameMatiere, deleteMatiere,
-      addCours, addCoursTexte, addCoursAudio, deleteCours,
-      updateFlashcardStatus,
-      isLoading, isError, triggerError
-    }}>
+    <DataContext.Provider
+      value={{
+        facultes,
+        matieres,
+        cours,
+        resumes,
+        flashcards,
+        addFaculte,
+        renameFaculte,
+        deleteFaculte,
+        addMatiere,
+        renameMatiere,
+        deleteMatiere,
+        addCours,
+        addCoursTexte,
+        addCoursAudio,
+        deleteCours,
+        updateFlashcardStatus,
+        isLoading,
+        isError,
+        triggerError,
+      }}
+    >
       {children}
     </DataContext.Provider>
   );

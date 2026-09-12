@@ -10,14 +10,16 @@ export default function BibliothequePage() {
   const router = useRouter();
 
   // Trier les cours par date de création (les plus récents en premier)
-  const sortedCours = [...cours].sort((a, b) => new Date(b.cree_le).getTime() - new Date(a.cree_le).getTime());
+  const sortedCours = [...cours].sort(
+    (a, b) => new Date(b.cree_le).getTime() - new Date(a.cree_le).getTime()
+  );
 
   function getMatiereNom(id: string) {
-    return matieres.find(m => m.id === id)?.nom || "Matière inconnue";
+    return matieres.find((m) => m.id === id)?.nom || "Matière inconnue";
   }
 
   function getResume(coursId: string) {
-    return resumes.find(r => r.cours_id === coursId);
+    return resumes.find((r) => r.cours_id === coursId);
   }
 
   const handleDownloadPDF = (c: any, r: any) => {
@@ -28,9 +30,9 @@ export default function BibliothequePage() {
     document.body.appendChild(wrapper);
 
     // Injection du style
-    const styleId = 'pdf-print-style';
+    const styleId = "pdf-print-style";
     if (!document.getElementById(styleId)) {
-      const style = document.createElement('style');
+      const style = document.createElement("style");
       style.id = styleId;
       style.innerHTML = `
         @media print {
@@ -87,7 +89,9 @@ export default function BibliothequePage() {
         </div>
         <div>
           <h1 className="text-2xl font-bold text-foreground">Ma bibliothèque</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">Historique de tous tes cours, résumés et flashcards.</p>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            Historique de tous tes cours, résumés et flashcards.
+          </p>
         </div>
       </div>
 
@@ -107,13 +111,16 @@ export default function BibliothequePage() {
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {sortedCours.map(c => {
+          {sortedCours.map((c) => {
             const matiere = getMatiereNom(c.matiere_id);
             const r = getResume(c.id);
             const isAudio = c.type === "audio";
 
             return (
-              <div key={c.id} className="bg-white rounded-2xl border border-border p-5 shadow-sm flex flex-col hover:border-primary/30 transition-colors">
+              <div
+                key={c.id}
+                className="bg-white rounded-2xl border border-border p-5 shadow-sm flex flex-col hover:border-primary/30 transition-colors"
+              >
                 <div className="flex items-start justify-between gap-4 mb-3">
                   <div className="flex-1">
                     <p className="text-xs font-bold text-primary uppercase tracking-wider mb-1">
@@ -124,12 +131,21 @@ export default function BibliothequePage() {
                     </h3>
                   </div>
                   <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center shrink-0">
-                    {isAudio ? <Headphones size={16} className="text-muted-foreground" /> : <FileText size={16} className="text-muted-foreground" />}
+                    {isAudio ? (
+                      <Headphones size={16} className="text-muted-foreground" />
+                    ) : (
+                      <FileText size={16} className="text-muted-foreground" />
+                    )}
                   </div>
                 </div>
-                
+
                 <p className="text-xs text-muted-foreground mb-4 flex-1">
-                  Créé le {new Date(c.cree_le).toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" })}
+                  Créé le{" "}
+                  {new Date(c.cree_le).toLocaleDateString("fr-FR", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
                 </p>
 
                 <div className="flex items-center gap-2 mt-auto pt-4 border-t border-border/50">
@@ -140,7 +156,7 @@ export default function BibliothequePage() {
                   >
                     Voir <ArrowRight size={16} />
                   </button>
-                  
+
                   {isAudio && (
                     <button
                       title="Télécharger l'audio"

@@ -31,7 +31,6 @@ export function CookieBanner() {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-6 animate-in slide-in-from-bottom-10 duration-500 ease-out pointer-events-none">
       <div className="max-w-5xl mx-auto bg-white/95 backdrop-blur-xl border border-border shadow-2xl rounded-2xl p-5 md:p-6 pointer-events-auto flex flex-col md:flex-row gap-6 items-start md:items-center">
-        
         <div className="flex-1 flex gap-4">
           <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-primary hidden sm:flex">
             <Cookie size={24} />
@@ -39,19 +38,25 @@ export function CookieBanner() {
           <div>
             <h3 className="text-lg font-bold text-foreground mb-1">On respecte ta vie privée</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Nous utilisons des cookies pour assurer le bon fonctionnement du site, analyser notre trafic et améliorer ton expérience d'apprentissage. Tu peux changer d'avis à tout moment via nos <Link href="/cookies" className="text-primary hover:underline font-medium">politiques de cookies</Link>.
+              Nous utilisons des cookies pour assurer le bon fonctionnement du site, analyser notre
+              trafic et améliorer ton expérience d&apos;apprentissage. Tu peux changer d&apos;avis à
+              tout moment via nos{" "}
+              <Link href="/cookies" className="text-primary hover:underline font-medium">
+                politiques de cookies
+              </Link>
+              .
             </p>
           </div>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto shrink-0">
-          <button 
+          <button
             onClick={handleRefuse}
             className="px-6 py-2.5 rounded-xl border border-border text-foreground hover:bg-muted font-semibold text-sm transition-colors w-full sm:w-auto"
           >
             Continuer sans accepter
           </button>
-          <button 
+          <button
             onClick={handleAccept}
             className="px-6 py-2.5 rounded-xl bg-primary text-white hover:bg-primary/90 font-semibold text-sm shadow-md shadow-primary/20 transition-all w-full sm:w-auto"
           >
@@ -59,7 +64,7 @@ export function CookieBanner() {
           </button>
         </div>
 
-        <button 
+        <button
           onClick={handleRefuse}
           className="absolute top-4 right-4 text-muted-foreground hover:text-foreground md:hidden"
         >

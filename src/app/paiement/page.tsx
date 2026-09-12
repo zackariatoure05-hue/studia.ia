@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
@@ -16,11 +16,16 @@ const PLANS: Record<PlanId, { label: string; price: string; features: string[] }
   premium: {
     label: "Premium",
     price: "9,99€/mois",
-    features: ["Cours illimités", "Résumés IA avancés", "Flashcards illimitées", "Priorité support"],
+    features: [
+      "Cours illimités",
+      "Résumés IA avancés",
+      "Flashcards illimitées",
+      "Priorité support",
+    ],
   },
 };
 
-export default function PaiementPage() {
+function PaiementContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, setPlan } = useAuth();
@@ -36,7 +41,11 @@ export default function PaiementPage() {
   const [error, setError] = useState("");
 
   function formatCardNum(val: string) {
-    return val.replace(/\D/g, "").slice(0, 16).replace(/(.{4})/g, "$1 ").trim();
+    return val
+      .replace(/\D/g, "")
+      .slice(0, 16)
+      .replace(/(.{4})/g, "$1 ")
+      .trim();
   }
 
   function formatExpiry(val: string) {
@@ -61,44 +70,111 @@ export default function PaiementPage() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--background)", display: "flex", flexDirection: "column" }}>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "var(--background)",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       {/* Header */}
-      <header style={{ padding: "1.25rem 2rem", borderBottom: "1px solid var(--border)", background: "#fff", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <Link href="/" style={{ textDecoration: "none", fontWeight: 800, fontSize: "1.1rem", color: "var(--foreground)", letterSpacing: "-0.02em" }}>
+      <header
+        style={{
+          padding: "1.25rem 2rem",
+          borderBottom: "1px solid var(--border)",
+          background: "#fff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <Link
+          href="/"
+          style={{
+            textDecoration: "none",
+            fontWeight: 800,
+            fontSize: "1.1rem",
+            color: "var(--foreground)",
+            letterSpacing: "-0.02em",
+          }}
+        >
           Studi<span style={{ color: "var(--primary)" }}>IA</span>
         </Link>
-        <span style={{ fontSize: "0.85rem", color: "var(--muted-foreground)" }}>🔒 Paiement sécurisé</span>
+        <span style={{ fontSize: "0.85rem", color: "var(--muted-foreground)" }}>
+          🔒 Paiement sécurisé
+        </span>
       </header>
 
-      <main style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem 1rem" }}>
-        <div style={{ display: "flex", gap: "2rem", maxWidth: "860px", width: "100%", flexWrap: "wrap" }}>
-
-          {/* Récapitulatif de l'offre */}
-          <div style={{
-            flex: "1 1 280px",
-            background: "var(--foreground)",
-            color: "#fff",
-            borderRadius: "16px",
-            padding: "2rem",
+      <main
+        style={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "2rem 1rem",
+        }}
+      >
+        <div
+          style={{
             display: "flex",
-            flexDirection: "column",
-            gap: "1.25rem",
-          }}>
+            gap: "2rem",
+            maxWidth: "860px",
+            width: "100%",
+            flexWrap: "wrap",
+          }}
+        >
+          {/* Récapitulatif de l'offre */}
+          <div
+            style={{
+              flex: "1 1 280px",
+              background: "var(--foreground)",
+              color: "#fff",
+              borderRadius: "16px",
+              padding: "2rem",
+              display: "flex",
+              flexDirection: "column",
+              gap: "1.25rem",
+            }}
+          >
             <div>
-              <p style={{ fontSize: "0.8rem", fontWeight: 600, color: "oklch(0.77 0.17 73)", textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 0.5rem" }}>
+              <p
+                style={{
+                  fontSize: "0.8rem",
+                  fontWeight: 600,
+                  color: "oklch(0.77 0.17 73)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                  margin: "0 0 0.5rem",
+                }}
+              >
                 Plan sélectionné
               </p>
-              <h2 style={{ fontSize: "1.8rem", fontWeight: 800, margin: 0 }}>
-                {plan.label}
-              </h2>
-              <p style={{ fontSize: "2.2rem", fontWeight: 900, margin: "0.5rem 0 0", color: "oklch(0.77 0.17 73)" }}>
+              <h2 style={{ fontSize: "1.8rem", fontWeight: 800, margin: 0 }}>{plan.label}</h2>
+              <p
+                style={{
+                  fontSize: "2.2rem",
+                  fontWeight: 900,
+                  margin: "0.5rem 0 0",
+                  color: "oklch(0.77 0.17 73)",
+                }}
+              >
                 {plan.price}
               </p>
             </div>
 
             <div style={{ borderTop: "1px solid rgba(255,255,255,0.15)", paddingTop: "1.25rem" }}>
               {plan.features.map((f, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.75rem", fontSize: "0.9rem" }}>
+                <div
+                  key={i}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.6rem",
+                    marginBottom: "0.75rem",
+                    fontSize: "0.9rem",
+                  }}
+                >
                   <span style={{ color: "oklch(0.77 0.17 73)", fontSize: "1rem" }}>✓</span>
                   {f}
                 </div>
@@ -111,89 +187,174 @@ export default function PaiementPage() {
           </div>
 
           {/* Formulaire de paiement */}
-          <form onSubmit={handlePay} style={{
-            flex: "1 1 340px",
-            background: "#fff",
-            borderRadius: "16px",
-            padding: "2rem",
-            border: "1px solid var(--border)",
-            boxShadow: "0 8px 30px rgba(0,0,0,0.06)",
-            display: "flex",
-            flexDirection: "column",
-            gap: "1.25rem",
-          }}>
-            <h3 style={{ fontSize: "1.2rem", fontWeight: 800, margin: 0, color: "var(--foreground)" }}>
+          <form
+            onSubmit={handlePay}
+            style={{
+              flex: "1 1 340px",
+              background: "#fff",
+              borderRadius: "16px",
+              padding: "2rem",
+              border: "1px solid var(--border)",
+              boxShadow: "0 8px 30px rgba(0,0,0,0.06)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "1.25rem",
+            }}
+          >
+            <h3
+              style={{ fontSize: "1.2rem", fontWeight: 800, margin: 0, color: "var(--foreground)" }}
+            >
               Informations de paiement
             </h3>
 
             {/* Nom */}
             <div>
-              <label style={{ display: "block", fontWeight: 600, fontSize: "0.82rem", marginBottom: "0.4rem", color: "var(--foreground)" }}>
+              <label
+                style={{
+                  display: "block",
+                  fontWeight: 600,
+                  fontSize: "0.82rem",
+                  marginBottom: "0.4rem",
+                  color: "var(--foreground)",
+                }}
+              >
                 Nom sur la carte
               </label>
               <input
                 type="text"
                 value={name}
-                onChange={e => setName(e.target.value)}
+                onChange={(e) => setName(e.target.value)}
                 placeholder="Jean Dupont"
                 required
-                style={{ width: "100%", padding: "0.75rem", borderRadius: "8px", border: "1px solid var(--border)", fontSize: "0.95rem", boxSizing: "border-box" }}
+                style={{
+                  width: "100%",
+                  padding: "0.75rem",
+                  borderRadius: "8px",
+                  border: "1px solid var(--border)",
+                  fontSize: "0.95rem",
+                  boxSizing: "border-box",
+                }}
               />
             </div>
 
             {/* Numéro */}
             <div>
-              <label style={{ display: "block", fontWeight: 600, fontSize: "0.82rem", marginBottom: "0.4rem", color: "var(--foreground)" }}>
+              <label
+                style={{
+                  display: "block",
+                  fontWeight: 600,
+                  fontSize: "0.82rem",
+                  marginBottom: "0.4rem",
+                  color: "var(--foreground)",
+                }}
+              >
                 Numéro de carte
               </label>
               <div style={{ position: "relative" }}>
                 <input
                   type="text"
                   value={cardNum}
-                  onChange={e => setCardNum(formatCardNum(e.target.value))}
+                  onChange={(e) => setCardNum(formatCardNum(e.target.value))}
                   placeholder="1234 5678 9012 3456"
                   inputMode="numeric"
                   required
-                  style={{ width: "100%", padding: "0.75rem 2.5rem 0.75rem 0.75rem", borderRadius: "8px", border: "1px solid var(--border)", fontSize: "0.95rem", boxSizing: "border-box", letterSpacing: "0.05em" }}
+                  style={{
+                    width: "100%",
+                    padding: "0.75rem 2.5rem 0.75rem 0.75rem",
+                    borderRadius: "8px",
+                    border: "1px solid var(--border)",
+                    fontSize: "0.95rem",
+                    boxSizing: "border-box",
+                    letterSpacing: "0.05em",
+                  }}
                 />
-                <span style={{ position: "absolute", right: "0.75rem", top: "50%", transform: "translateY(-50%)", fontSize: "1.2rem" }}>💳</span>
+                <span
+                  style={{
+                    position: "absolute",
+                    right: "0.75rem",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    fontSize: "1.2rem",
+                  }}
+                >
+                  💳
+                </span>
               </div>
             </div>
 
             {/* Expiry + CVC */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
               <div>
-                <label style={{ display: "block", fontWeight: 600, fontSize: "0.82rem", marginBottom: "0.4rem", color: "var(--foreground)" }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontWeight: 600,
+                    fontSize: "0.82rem",
+                    marginBottom: "0.4rem",
+                    color: "var(--foreground)",
+                  }}
+                >
                   Date d'expiration
                 </label>
                 <input
                   type="text"
                   value={expiry}
-                  onChange={e => setExpiry(formatExpiry(e.target.value))}
+                  onChange={(e) => setExpiry(formatExpiry(e.target.value))}
                   placeholder="MM/AA"
                   inputMode="numeric"
                   required
-                  style={{ width: "100%", padding: "0.75rem", borderRadius: "8px", border: "1px solid var(--border)", fontSize: "0.95rem", boxSizing: "border-box" }}
+                  style={{
+                    width: "100%",
+                    padding: "0.75rem",
+                    borderRadius: "8px",
+                    border: "1px solid var(--border)",
+                    fontSize: "0.95rem",
+                    boxSizing: "border-box",
+                  }}
                 />
               </div>
               <div>
-                <label style={{ display: "block", fontWeight: 600, fontSize: "0.82rem", marginBottom: "0.4rem", color: "var(--foreground)" }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontWeight: 600,
+                    fontSize: "0.82rem",
+                    marginBottom: "0.4rem",
+                    color: "var(--foreground)",
+                  }}
+                >
                   CVC
                 </label>
                 <input
                   type="text"
                   value={cvc}
-                  onChange={e => setCvc(e.target.value.replace(/\D/g, "").slice(0, 3))}
+                  onChange={(e) => setCvc(e.target.value.replace(/\D/g, "").slice(0, 3))}
                   placeholder="123"
                   inputMode="numeric"
                   required
-                  style={{ width: "100%", padding: "0.75rem", borderRadius: "8px", border: "1px solid var(--border)", fontSize: "0.95rem", boxSizing: "border-box" }}
+                  style={{
+                    width: "100%",
+                    padding: "0.75rem",
+                    borderRadius: "8px",
+                    border: "1px solid var(--border)",
+                    fontSize: "0.95rem",
+                    boxSizing: "border-box",
+                  }}
                 />
               </div>
             </div>
 
             {error && (
-              <p style={{ color: "oklch(0.577 0.245 27.325)", fontSize: "0.85rem", margin: 0, background: "oklch(0.97 0.04 27)", padding: "0.6rem 0.8rem", borderRadius: "8px" }}>
+              <p
+                style={{
+                  color: "oklch(0.577 0.245 27.325)",
+                  fontSize: "0.85rem",
+                  margin: 0,
+                  background: "oklch(0.97 0.04 27)",
+                  padding: "0.6rem 0.8rem",
+                  borderRadius: "8px",
+                }}
+              >
                 {error}
               </p>
             )}
@@ -216,12 +377,27 @@ export default function PaiementPage() {
               {loading ? "Traitement en cours…" : `Payer ${plan.price}`}
             </button>
 
-            <p style={{ textAlign: "center", fontSize: "0.78rem", color: "var(--muted-foreground)", margin: 0 }}>
+            <p
+              style={{
+                textAlign: "center",
+                fontSize: "0.78rem",
+                color: "var(--muted-foreground)",
+                margin: 0,
+              }}
+            >
               🔒 Paiement sécurisé SSL · Aucun stockage des données carte
             </p>
           </form>
         </div>
       </main>
     </div>
+  );
+}
+
+export default function PaiementPage() {
+  return (
+    <Suspense fallback={<div>Chargement...</div>}>
+      <PaiementContent />
+    </Suspense>
   );
 }
