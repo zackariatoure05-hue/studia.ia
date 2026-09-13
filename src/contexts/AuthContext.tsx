@@ -22,6 +22,7 @@ export interface StoredUser {
   age?: string;
   ville?: string;
   avatarId?: string;
+  extraAudioMinutes?: number;
 }
 
 export interface AuthUser {
@@ -39,6 +40,7 @@ export interface AuthUser {
   ville?: string;
   avatarId?: string;
   billingCycle?: "monthly" | "annual";
+  extraAudioMinutes?: number;
 }
 
 // Audio limits per plan (in minutes)
@@ -72,6 +74,7 @@ type AuthCtx = {
   updateUser: (data: Partial<StoredUser>) => void;
   audioLimitMinutes: number;
   audioRemainingMinutes: number;
+  buyExtraMinutes: (minutes: number) => void;
 };
 
 // ── Mock DB ────────────────────────────────────────────────────────────────
@@ -137,6 +140,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           ville: found.ville,
           avatarId: found.avatarId,
           billingCycle: found.billingCycle,
+          extraAudioMinutes: found.extraAudioMinutes || 0,
         });
       }
     }
@@ -156,6 +160,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       status: "trial",
       trialEndsAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
       audioUsedMinutes: 0,
+      extraAudioMinutes: 0,
       hasCompletedOnboarding: false,
     };
     users.push(newUser);
@@ -169,6 +174,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       status: newUser.status,
       trialEndsAt: newUser.trialEndsAt,
       audioUsedMinutes: newUser.audioUsedMinutes,
+      extraAudioMinutes: newUser.extraAudioMinutes,
       hasCompletedOnboarding: false,
     });
     return { ok: true };
@@ -197,6 +203,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       ville: found.ville,
       avatarId: found.avatarId,
       billingCycle: found.billingCycle,
+      extraAudioMinutes: found.extraAudioMinutes || 0,
     });
     return { ok: true };
   }, []);
@@ -229,6 +236,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       users[idx].audioUsedMinutes = newTotal;
       saveUsers(users);
       setUser((prev) => (prev ? { ...prev, audioUsedMinutes: newTotal } : null));
+    },
+    [user]
+  );
+
+  const buyExtraMinutes = useCallback(
+    (minutes: number) => {
+      if (!user) return;
+      const users = getUsers();
+      const idx = users.findIndex((u) => u.id === user.id);
+      if (idx === -1) return;
+      const newExtra = (users[idx].extraAudioMinutes || 0) + minutes;
+      users[idx].extraAudioMinutes = newExtra;
+      saveUsers(users);
+      setUser((prev) => (prev ? { ...prev, extraAudioMinutes: newExtra } : null));
     },
     [user]
   );
@@ -282,7 +303,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const audioLimitMinutes = user ? PLAN_AUDIO_LIMITS[user.plan] : PLAN_AUDIO_LIMITS.decouverte;
-  const audioRemainingMinutes = user ? Math.max(0, audioLimitMinutes - user.audioUsedMinutes) : 0;
+  const totalLimit = user ? audioLimitMinutes + (user.extraAudioMinutes || 0) : 0;
+  const audioRemainingMinutes = user ? Math.max(0, totalLimit - user.audioUsedMinutes) : 0;
 
   return (
     <AuthContext.Provider
@@ -298,6 +320,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         updateUser,
         audioLimitMinutes,
         audioRemainingMinutes,
+        buyExtraMinutes,
       }}
     >
       {children}

@@ -2,6 +2,9 @@
 
 import React, { createContext, useContext, useState, useRef, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import QuotaModal from "@/components/dashboard/QuotaModal";
+import Modal from "@/components/ui/Modal";
+import { AlertCircle } from "lucide-react";
 
 interface RecordingContextType {
   isRecording: boolean;
@@ -29,6 +32,9 @@ export function RecordingProvider({ children }: { children: React.ReactNode }) {
   const [interimTranscription, setInterimTranscription] = useState("");
   const [recordedAudioBlob, setRecordedAudioBlob] = useState<Blob | null>(null);
 
+  const [showQuotaModal, setShowQuotaModal] = useState(false);
+  const [errorModal, setErrorModal] = useState<{ isOpen: boolean; message: string }>({ isOpen: false, message: "" });
+
   const recognitionRef = useRef<any>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<BlobPart[]>([]);
@@ -38,16 +44,25 @@ export function RecordingProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let int: any;
     if (isRecording && !isPaused) {
-      int = setInterval(() => setRecordingTime((t) => t + 1), 1000);
+      int = setInterval(() => {
+        setRecordingTime((t) => {
+          const newTime = t + 1;
+          if (audioLimitMinutes !== Infinity && Math.ceil(newTime / 60) > audioRemainingMinutes) {
+            setTimeout(() => {
+              stopRecording();
+              setShowQuotaModal(true);
+            }, 0);
+          }
+          return newTime;
+        });
+      }, 1000);
     }
     return () => clearInterval(int);
-  }, [isRecording, isPaused]);
+  }, [isRecording, isPaused, audioLimitMinutes, audioRemainingMinutes]);
 
   const startRecording = async () => {
     if (audioLimitMinutes !== Infinity && audioRemainingMinutes <= 0) {
-      alert(
-        `Votre quota de transcription audio est épuisé pour ce mois (${audioLimitMinutes} min). Mettez à niveau votre formule.`
-      );
+      setShowQuotaModal(true);
       return;
     }
 
@@ -91,9 +106,10 @@ export function RecordingProvider({ children }: { children: React.ReactNode }) {
       const SpeechRecognition =
         (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (!SpeechRecognition) {
-        alert(
-          "Votre navigateur ne supporte pas la reconnaissance vocale (essayez Chrome ou Safari)."
-        );
+        setErrorModal({
+          isOpen: true,
+          message: "Votre navigateur ne supporte pas la reconnaissance vocale (essayez Chrome ou Safari).",
+        });
         return;
       }
 
@@ -148,7 +164,10 @@ export function RecordingProvider({ children }: { children: React.ReactNode }) {
       setInterimTranscription("");
     } catch (err) {
       console.error("Erreur accès microphone", err);
-      alert("Impossible de démarrer l'enregistrement.");
+      setErrorModal({
+        isOpen: true,
+        message: "Impossible d'accéder au microphone. Veuillez vérifier les autorisations de votre navigateur.",
+      });
     }
   };
 
@@ -229,6 +248,25 @@ export function RecordingProvider({ children }: { children: React.ReactNode }) {
       }}
     >
       {children}
+
+      <QuotaModal isOpen={showQuotaModal} onClose={() => setShowQuotaModal(false)} />
+      
+      <Modal
+        isOpen={errorModal.isOpen}
+        onClose={() => setErrorModal({ isOpen: false, message: "" })}
+        title="Erreur"
+        icon={<AlertCircle className="w-6 h-6" />}
+      >
+        <p className="text-slate-600 font-medium mb-4">{errorModal.message}</p>
+        <div className="flex justify-end">
+          <button
+            onClick={() => setErrorModal({ isOpen: false, message: "" })}
+            className="px-6 py-2 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors"
+          >
+            Compris
+          </button>
+        </div>
+      </Modal>
     </RecordingContext.Provider>
   );
 }

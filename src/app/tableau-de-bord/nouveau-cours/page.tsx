@@ -7,6 +7,8 @@ import Breadcrumb from "@/components/dashboard/Breadcrumb";
 import { useAuth, PLAN_LABELS } from "@/contexts/AuthContext";
 import { useRecording } from "@/contexts/RecordingContext";
 import Link from "next/link";
+import Modal from "@/components/ui/Modal";
+import { AlertCircle } from "lucide-react";
 
 import { MOCK_MATIERES, MOCK_FACULTES } from "@/lib/fake-data";
 
@@ -50,6 +52,8 @@ export default function NouveauCoursPage() {
   // Loader state
   const [loading, setLoading] = useState(false);
   const [loadingStep, setLoadingStep] = useState<"transcription" | "analyse" | null>(null);
+
+  const [errorModal, setErrorModal] = useState({ isOpen: false, message: "" });
 
   // Load subjects from the user's faculty via API
   useEffect(() => {
@@ -157,26 +161,26 @@ export default function NouveauCoursPage() {
     if (file && file.type.startsWith("audio/")) {
       setAudioFile(file);
     } else {
-      alert("Veuillez déposer un fichier audio valide.");
+      setErrorModal({ isOpen: true, message: "Veuillez déposer un fichier audio valide." });
     }
   };
 
   async function handleGenerate(e: React.FormEvent) {
     e.preventDefault();
     if (!titre.trim()) {
-      alert("Veuillez entrer un titre pour votre cours.");
+      setErrorModal({ isOpen: true, message: "Veuillez entrer un titre pour votre cours." });
       return;
     }
     if (!matiereId) {
-      alert("Veuillez sélectionner une matière.");
+      setErrorModal({ isOpen: true, message: "Veuillez sélectionner une matière." });
       return;
     }
     if (mode === "texte" && !contenu.trim()) {
-      alert("Veuillez coller le contenu de votre cours.");
+      setErrorModal({ isOpen: true, message: "Veuillez coller le contenu de votre cours." });
       return;
     }
     if (mode === "audio" && !audioFile && !isRecording && !transcription.trim()) {
-      alert("Veuillez enregistrer ou importer un fichier audio.");
+      setErrorModal({ isOpen: true, message: "Veuillez enregistrer ou importer un fichier audio." });
       return;
     }
 
@@ -240,7 +244,7 @@ export default function NouveauCoursPage() {
       router.push(`/tableau-de-bord/cours/${newCours.id}`);
     } catch (err) {
       console.error(err);
-      alert("Une erreur s'est produite lors de la génération. Veuillez réessayer.");
+      setErrorModal({ isOpen: true, message: "Une erreur s'est produite lors de la génération. Veuillez réessayer." });
       setLoading(false);
       setLoadingStep(null);
     }
@@ -313,7 +317,7 @@ export default function NouveauCoursPage() {
         onSubmit={handleGenerate}
         style={{ display: "flex", flexDirection: "column", gap: "1.5rem", maxWidth: "800px" }}
       >
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label
               htmlFor="titre"
@@ -460,14 +464,7 @@ export default function NouveauCoursPage() {
           </div>
         ) : (
           <div style={{ animation: "fadeIn 0.2s" }}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "0.5rem",
-              }}
-            >
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2">
               <label style={{ fontWeight: 600, fontSize: "0.85rem", color: "var(--foreground)" }}>
                 Source audio
               </label>
@@ -518,15 +515,11 @@ export default function NouveauCoursPage() {
             {/* Quota épuisé banner */}
             {user && audioLimitMinutes !== Infinity && audioRemainingMinutes <= 0 && (
               <div
+                className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 mb-4"
                 style={{
                   background: "oklch(0.97 0.02 27)",
                   border: "1px solid oklch(0.85 0.1 27)",
                   borderRadius: "var(--radius)",
-                  padding: "1rem 1.25rem",
-                  marginBottom: "1rem",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
                 }}
               >
                 <div>
@@ -1111,6 +1104,22 @@ export default function NouveauCoursPage() {
       `,
         }}
       />
+      <Modal
+        isOpen={errorModal.isOpen}
+        onClose={() => setErrorModal({ isOpen: false, message: "" })}
+        title="Attention"
+        icon={<AlertCircle className="w-6 h-6" />}
+      >
+        <p className="text-slate-600 font-medium mb-4">{errorModal.message}</p>
+        <div className="flex justify-end">
+          <button
+            onClick={() => setErrorModal({ isOpen: false, message: "" })}
+            className="px-6 py-2 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors"
+          >
+            Compris
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 }
