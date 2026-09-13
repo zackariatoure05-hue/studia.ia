@@ -8,6 +8,8 @@ import { useAuth, PLAN_LABELS } from "@/contexts/AuthContext";
 import { useRecording } from "@/contexts/RecordingContext";
 import Link from "next/link";
 
+import { MOCK_MATIERES, MOCK_FACULTES } from "@/lib/fake-data";
+
 type ApiSubject = { id: string; nom: string; couleur: string };
 
 export default function NouveauCoursPage() {
@@ -57,12 +59,24 @@ export default function NouveauCoursPage() {
     fetch(`/api/faculties/${fid}`)
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
-        if (data && !data.error) {
-          setSubjects(data.subjects ?? []);
+        if (data && !data.error && data.subjects?.length > 0) {
+          setSubjects(data.subjects);
           setFacultyName(data.nom ?? "");
+        } else {
+          // Fallback: use mock data
+          const mockFaculty = MOCK_FACULTES.find((f) => f.id === fid);
+          const mockSubjects = MOCK_MATIERES.filter((m) => m.faculte_id === fid);
+          setSubjects(mockSubjects.map((m) => ({ id: m.id, nom: m.nom, couleur: m.couleur })));
+          setFacultyName(mockFaculty?.nom ?? "");
         }
       })
-      .catch(() => {})
+      .catch(() => {
+        // Fallback on error
+        const mockFaculty = MOCK_FACULTES.find((f) => f.id === fid);
+        const mockSubjects = MOCK_MATIERES.filter((m) => m.faculte_id === fid);
+        setSubjects(mockSubjects.map((m) => ({ id: m.id, nom: m.nom, couleur: m.couleur })));
+        setFacultyName(mockFaculty?.nom ?? "");
+      })
       .finally(() => setLoadingSubjects(false));
   }, [user?.faculteId]);
 
