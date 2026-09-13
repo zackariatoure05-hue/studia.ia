@@ -12,6 +12,7 @@ if (connectionString.startsWith("prisma+postgres://")) {
   }
 }
 
-const pool = new Pool({ connectionString });
-const adapter = new PrismaPg(pool);
-export const prisma = new PrismaClient({ adapter });
+// On Vercel build without DATABASE_URL, export a lazy null to avoid crashing
+export const prisma = connectionString
+  ? new PrismaClient({ adapter: new PrismaPg(new Pool({ connectionString })) })
+  : (null as unknown as PrismaClient);
