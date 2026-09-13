@@ -180,7 +180,10 @@ export default function NouveauCoursPage() {
       return;
     }
     if (mode === "audio" && !audioFile && !isRecording && !transcription.trim()) {
-      setErrorModal({ isOpen: true, message: "Veuillez enregistrer ou importer un fichier audio." });
+      setErrorModal({
+        isOpen: true,
+        message: "Veuillez enregistrer ou importer un fichier audio.",
+      });
       return;
     }
 
@@ -244,7 +247,10 @@ export default function NouveauCoursPage() {
       router.push(`/tableau-de-bord/cours/${newCours.id}`);
     } catch (err) {
       console.error(err);
-      setErrorModal({ isOpen: true, message: "Une erreur s'est produite lors de la génération. Veuillez réessayer." });
+      setErrorModal({
+        isOpen: true,
+        message: "Une erreur s'est produite lors de la génération. Veuillez réessayer.",
+      });
       setLoading(false);
       setLoadingStep(null);
     }

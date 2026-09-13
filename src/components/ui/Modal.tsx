@@ -38,7 +38,7 @@ export default function Modal({ isOpen, onClose, title, children, icon }: ModalP
         className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300"
         onClick={onClose}
       />
-      
+
       {/* Modal Content - 3D Glassmorphism style */}
       <div
         className="relative w-full max-w-md transform overflow-hidden rounded-3xl bg-white/95 backdrop-blur-xl p-8 text-left align-middle shadow-2xl transition-all duration-300 border border-white/50"
@@ -71,9 +71,7 @@ export default function Modal({ isOpen, onClose, title, children, icon }: ModalP
           </div>
         )}
 
-        <div className="text-slate-600 leading-relaxed text-base">
-          {children}
-        </div>
+        <div className="text-slate-600 leading-relaxed text-base">{children}</div>
       </div>
     </div>,
     document.body

@@ -33,7 +33,10 @@ export function RecordingProvider({ children }: { children: React.ReactNode }) {
   const [recordedAudioBlob, setRecordedAudioBlob] = useState<Blob | null>(null);
 
   const [showQuotaModal, setShowQuotaModal] = useState(false);
-  const [errorModal, setErrorModal] = useState<{ isOpen: boolean; message: string }>({ isOpen: false, message: "" });
+  const [errorModal, setErrorModal] = useState<{ isOpen: boolean; message: string }>({
+    isOpen: false,
+    message: "",
+  });
 
   const recognitionRef = useRef<any>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -108,7 +111,8 @@ export function RecordingProvider({ children }: { children: React.ReactNode }) {
       if (!SpeechRecognition) {
         setErrorModal({
           isOpen: true,
-          message: "Votre navigateur ne supporte pas la reconnaissance vocale (essayez Chrome ou Safari).",
+          message:
+            "Votre navigateur ne supporte pas la reconnaissance vocale (essayez Chrome ou Safari).",
         });
         return;
       }
@@ -166,7 +170,8 @@ export function RecordingProvider({ children }: { children: React.ReactNode }) {
       console.error("Erreur accès microphone", err);
       setErrorModal({
         isOpen: true,
-        message: "Impossible d'accéder au microphone. Veuillez vérifier les autorisations de votre navigateur.",
+        message:
+          "Impossible d'accéder au microphone. Veuillez vérifier les autorisations de votre navigateur.",
       });
     }
   };
@@ -250,7 +255,7 @@ export function RecordingProvider({ children }: { children: React.ReactNode }) {
       {children}
 
       <QuotaModal isOpen={showQuotaModal} onClose={() => setShowQuotaModal(false)} />
-      
+
       <Modal
         isOpen={errorModal.isOpen}
         onClose={() => setErrorModal({ isOpen: false, message: "" })}

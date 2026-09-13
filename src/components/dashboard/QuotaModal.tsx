@@ -44,8 +44,8 @@ export default function QuotaModal({ isOpen, onClose }: QuotaModalProps) {
       <div className="space-y-6">
         <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4">
           <p className="text-sm text-slate-600">
-            Tu as utilisé la totalité de ton quota actuel (<strong>{totalLimit} min</strong>).
-            Ton plan actuel est : <strong className="text-indigo-600">{PLAN_LABELS[user.plan]}</strong>.
+            Tu as utilisé la totalité de ton quota actuel (<strong>{totalLimit} min</strong>). Ton
+            plan actuel est : <strong className="text-indigo-600">{PLAN_LABELS[user.plan]}</strong>.
           </p>
         </div>
 
@@ -60,7 +60,9 @@ export default function QuotaModal({ isOpen, onClose }: QuotaModalProps) {
               {/* Option 20 min */}
               <div className="relative flex flex-col bg-white border-2 border-slate-200 rounded-2xl p-4 hover:border-indigo-500 transition-colors group cursor-pointer shadow-sm hover:shadow-md">
                 <div className="flex justify-between items-start mb-2">
-                  <span className="font-extrabold text-2xl text-slate-900">+20<span className="text-sm text-slate-500 font-medium"> min</span></span>
+                  <span className="font-extrabold text-2xl text-slate-900">
+                    +20<span className="text-sm text-slate-500 font-medium"> min</span>
+                  </span>
                   <span className="font-bold text-lg text-indigo-600">1,00 €</span>
                 </div>
                 <button
@@ -79,7 +81,9 @@ export default function QuotaModal({ isOpen, onClose }: QuotaModalProps) {
                   Le plus rentable
                 </div>
                 <div className="flex justify-between items-start mb-2">
-                  <span className="font-extrabold text-2xl text-slate-900">+60<span className="text-sm text-slate-500 font-medium"> min</span></span>
+                  <span className="font-extrabold text-2xl text-slate-900">
+                    +60<span className="text-sm text-slate-500 font-medium"> min</span>
+                  </span>
                   <span className="font-bold text-lg text-indigo-600">1,80 €</span>
                 </div>
                 <button
