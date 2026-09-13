@@ -127,7 +127,7 @@ export default function HomePage() {
                   <Sparkles className="w-4 h-4" /> La nouvelle ère de l'apprentissage
                 </div>
 
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 tracking-tight leading-[1.1] mb-8 animate-in slide-in-from-left-6 fade-in duration-700 delay-100">
+                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 tracking-tight leading-[1.1] mb-8 animate-in slide-in-from-left-6 fade-in duration-700 delay-100">
                   Concentre-toi sur l'écoute.
                   <br />
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-[length:200%_auto] animate-gradient">
@@ -169,11 +169,7 @@ export default function HomePage() {
                 ></div>
 
                 <div
-                  className="relative w-full max-w-[800px] rounded-2xl md:rounded-[2.5rem] overflow-hidden border border-slate-200/50 shadow-2xl shadow-indigo-900/20"
-                  style={{
-                    transform: "perspective(1200px) rotateY(-15deg) rotateX(5deg)",
-                    transformStyle: "preserve-3d",
-                  }}
+                  className="hero-mockup-transform relative w-full max-w-[800px] rounded-2xl md:rounded-[2.5rem] overflow-hidden border border-slate-200/50 shadow-2xl shadow-indigo-900/20"
                 >
                   <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent z-10 pointer-events-none rounded-[2.5rem]"></div>
                   <AnimatedHeroMockup />
@@ -442,6 +438,15 @@ export default function HomePage() {
           </p>
         </div>
       </footer>
+
+      <style>{`
+        @media (min-width: 768px) {
+          .hero-mockup-transform {
+            transform: perspective(1200px) rotateY(-15deg) rotateX(5deg);
+            transform-style: preserve-3d;
+          }
+        }
+      `}</style>
     </div>
   );
 }
