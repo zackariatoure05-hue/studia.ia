@@ -139,8 +139,8 @@ export default function CheckoutPage() {
                   maxLength={5}
                   value={expiry}
                   onChange={(e) => setExpiry(formatExpiry(e.target.value))}
-                  pattern="(0[1-9]|1[0-2])\/?([0-9]{2})"
-                  title="Format MM/AA requis"
+                  pattern="[0-9]{2}/[0-9]{2}"
+                  title="Format MM/AA requis (ex: 09/27)"
                   className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 outline-none transition-all font-mono"
                 />
               </div>

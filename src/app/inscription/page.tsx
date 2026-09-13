@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, Suspense } from "react";
+import { useState, Suspense, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 
 function IconGoogle() {
@@ -46,6 +46,31 @@ function InscriptionContent() {
   const [errors, setErrors] = useState<Errors>({});
   const [loading, setLoading] = useState(false);
 
+  // 3D Tilt Effect State
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [rotateX, setRotateX] = useState(0);
+  const [rotateY, setRotateY] = useState(0);
+
+  function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+    if (!cardRef.current) return;
+    const card = cardRef.current;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    // Max rotation 10deg
+    const rotateXValue = ((y - centerY) / centerY) * -10;
+    const rotateYValue = ((x - centerX) / centerX) * 10;
+    setRotateX(rotateXValue);
+    setRotateY(rotateYValue);
+  }
+
+  function handleMouseLeave() {
+    setRotateX(0);
+    setRotateY(0);
+  }
+
   function validate(): boolean {
     const e: Errors = {};
     if (!nom.trim() || nom.trim().length < 2) e.nom = "Le nom doit contenir au moins 2 caractères.";
@@ -55,160 +80,95 @@ function InscriptionContent() {
     return Object.keys(e).length === 0;
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!validate()) return;
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 600));
-    const result = register(nom.trim(), email.trim(), password);
-    if (!result.ok) {
-      setErrors({ global: result.error });
-      setLoading(false);
+  async function handleSubmit(e?: React.FormEvent) {
+    if (e) e.preventDefault();
+    if (!validate()) {
+      alert("Erreur de validation (vérifie les champs en rouge)");
       return;
     }
-    // Rediriger vers la page de choix d'abonnement (Checkout)
-    router.push("/onboarding");
+    setLoading(true);
+    try {
+      await new Promise((r) => setTimeout(r, 600));
+      const result = register(nom.trim(), email.trim(), password);
+      if (!result.ok) {
+        setErrors({ global: result.error });
+        setLoading(false);
+        alert("Erreur: " + result.error);
+        return;
+      }
+      alert("Succès ! Redirection vers onboarding...");
+      window.location.href = "/onboarding";
+    } catch (err: any) {
+      console.error(err);
+      setErrors({ global: err.message || "Erreur inattendue" });
+      setLoading(false);
+      alert("Erreur inattendue: " + err.message);
+    }
   }
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        background: "oklch(0.98 0.01 276)",
-      }}
-    >
-      <header
-        style={{
-          padding: "1.25rem 1.5rem",
-          borderBottom: "1px solid var(--border)",
-          background: "#fff",
-        }}
-      >
-        <Link
-          href="/"
-          style={{
-            textDecoration: "none",
-            fontWeight: 700,
-            fontSize: "1.1rem",
-            color: "var(--foreground)",
-            letterSpacing: "-0.02em",
-          }}
-        >
-          Studi<span style={{ color: "var(--primary)" }}>IA</span>
+    <div className="min-h-screen flex flex-col bg-slate-50 relative overflow-hidden">
+      {/* Background Neo-Animation */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden flex items-center justify-center">
+        <div className="absolute w-[800px] h-[800px] bg-purple-300/30 rounded-full blur-[100px] animate-pulse mix-blend-multiply -top-[20%] -left-[10%]"></div>
+        <div
+          className="absolute w-[600px] h-[600px] bg-pink-300/30 rounded-full blur-[100px] animate-pulse mix-blend-multiply top-[20%] -right-[10%]"
+          style={{ animationDelay: "2s" }}
+        ></div>
+        <div
+          className="absolute w-[500px] h-[500px] bg-blue-300/30 rounded-full blur-[100px] animate-pulse mix-blend-multiply -bottom-[20%] left-[20%]"
+          style={{ animationDelay: "4s" }}
+        ></div>
+      </div>
+
+      <header className="relative z-10 px-6 py-5 border-b border-white/20 bg-white/50 backdrop-blur-md">
+        <Link href="/" className="text-xl font-bold text-slate-800 tracking-tight">
+          Studi<span className="text-purple-600">IA</span>
         </Link>
       </header>
 
-      <main
-        style={{
-          flex: 1,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "2rem 1rem",
-        }}
-      >
+      <main className="relative z-10 flex-1 flex items-center justify-center p-6">
         <div
+          className="w-full max-w-md bg-white/80 backdrop-blur-xl border border-white rounded-3xl p-8 shadow-2xl"
           style={{
-            width: "100%",
-            maxWidth: 440,
-            background: "#fff",
-            border: "1px solid var(--border)",
-            borderRadius: "calc(var(--radius) + 4px)",
-            padding: "2.5rem 2rem",
-            boxShadow: "0 4px 30px rgba(0,0,0,0.06)",
+            boxShadow:
+              "0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255,255,255,0.5) inset",
           }}
         >
-          <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-            <h1
-              style={{
-                fontSize: "1.6rem",
-                fontWeight: 800,
-                letterSpacing: "-0.02em",
-                color: "var(--foreground)",
-                marginBottom: "0.35rem",
-              }}
-            >
-              Créer un compte
-            </h1>
-            <p style={{ color: "var(--muted-foreground)", fontSize: "0.9rem" }}>
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-extrabold text-slate-800 mb-2">Créer un compte</h1>
+            <p className="text-slate-500 text-sm">
               Rejoins des milliers d&apos;étudiants qui révisent mieux.
             </p>
           </div>
 
           <button
             type="button"
-            style={{
-              width: "100%",
-              padding: "0.65rem 1rem",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "0.6rem",
-              border: "1px solid var(--border)",
-              borderRadius: "var(--radius)",
-              background: "#fff",
-              cursor: "pointer",
-              fontWeight: 600,
-              fontSize: "0.9rem",
-              color: "var(--foreground)",
-              marginBottom: "1.5rem",
-            }}
+            className="w-full py-3 px-4 flex items-center justify-center gap-3 bg-white border border-slate-200 rounded-xl text-slate-700 font-semibold text-sm hover:bg-slate-50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 mb-6"
             onClick={() => alert("OAuth Google disponible prochainement.")}
           >
             <IconGoogle /> Continuer avec Google
           </button>
 
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.75rem",
-              marginBottom: "1.5rem",
-            }}
-          >
-            <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
-            <span
-              style={{ color: "var(--muted-foreground)", fontSize: "0.8rem", whiteSpace: "nowrap" }}
-            >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="flex-1 h-px bg-slate-200" />
+            <span className="text-slate-400 text-xs font-medium uppercase tracking-wider">
               ou avec ton email
             </span>
-            <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
+            <div className="flex-1 h-px bg-slate-200" />
           </div>
 
           {errors.global && (
-            <div
-              style={{
-                background: "oklch(0.97 0.02 27)",
-                border: "1px solid oklch(0.85 0.1 27)",
-                borderRadius: "var(--radius)",
-                padding: "0.75rem 1rem",
-                marginBottom: "1rem",
-                color: "oklch(0.5 0.2 27)",
-                fontSize: "0.9rem",
-                fontWeight: 600,
-              }}
-            >
-              ⚠️ {errors.global}
+            <div className="bg-red-50 border border-red-200 text-red-600 text-sm font-semibold p-4 rounded-xl mb-6 flex items-center gap-2">
+              <span>⚠️</span> {errors.global}
             </div>
           )}
 
-          <form
-            onSubmit={handleSubmit}
-            noValidate
-            style={{ display: "flex", flexDirection: "column", gap: "1.1rem" }}
-          >
+          <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5 relative z-50">
             <div>
               <label
                 htmlFor="reg-nom"
-                style={{
-                  display: "block",
-                  fontWeight: 600,
-                  fontSize: "0.85rem",
-                  marginBottom: "0.4rem",
-                  color: "var(--foreground)",
-                }}
+                className="block font-semibold text-sm text-slate-700 mb-1.5"
               >
                 Nom complet
               </label>
@@ -222,39 +182,21 @@ function InscriptionContent() {
                   setNom(e.target.value);
                   setErrors((prev) => ({ ...prev, nom: undefined, global: undefined }));
                 }}
-                style={{
-                  width: "100%",
-                  padding: "0.6rem 0.8rem",
-                  border: `1px solid ${errors.nom ? "oklch(0.577 0.245 27.325)" : "var(--border)"}`,
-                  borderRadius: "var(--radius)",
-                  fontSize: "0.95rem",
-                  outline: "none",
-                  boxSizing: "border-box",
-                }}
+                className={`w-full px-4 py-3 rounded-xl text-slate-800 text-sm bg-white border ${
+                  errors.nom
+                    ? "border-red-400 focus:ring-red-100"
+                    : "border-slate-200 focus:border-purple-400 focus:ring-purple-100"
+                } focus:outline-none focus:ring-4 transition-all`}
               />
               {errors.nom && (
-                <p
-                  style={{
-                    color: "oklch(0.577 0.245 27.325)",
-                    fontSize: "0.8rem",
-                    marginTop: "0.3rem",
-                  }}
-                >
-                  {errors.nom}
-                </p>
+                <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.nom}</p>
               )}
             </div>
 
             <div>
               <label
                 htmlFor="reg-email"
-                style={{
-                  display: "block",
-                  fontWeight: 600,
-                  fontSize: "0.85rem",
-                  marginBottom: "0.4rem",
-                  color: "var(--foreground)",
-                }}
+                className="block font-semibold text-sm text-slate-700 mb-1.5"
               >
                 Adresse e-mail
               </label>
@@ -268,39 +210,21 @@ function InscriptionContent() {
                   setEmail(e.target.value);
                   setErrors((prev) => ({ ...prev, email: undefined, global: undefined }));
                 }}
-                style={{
-                  width: "100%",
-                  padding: "0.6rem 0.8rem",
-                  border: `1px solid ${errors.email ? "oklch(0.577 0.245 27.325)" : "var(--border)"}`,
-                  borderRadius: "var(--radius)",
-                  fontSize: "0.95rem",
-                  outline: "none",
-                  boxSizing: "border-box",
-                }}
+                className={`w-full px-4 py-3 rounded-xl text-slate-800 text-sm bg-white border ${
+                  errors.email
+                    ? "border-red-400 focus:ring-red-100"
+                    : "border-slate-200 focus:border-purple-400 focus:ring-purple-100"
+                } focus:outline-none focus:ring-4 transition-all`}
               />
               {errors.email && (
-                <p
-                  style={{
-                    color: "oklch(0.577 0.245 27.325)",
-                    fontSize: "0.8rem",
-                    marginTop: "0.3rem",
-                  }}
-                >
-                  {errors.email}
-                </p>
+                <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.email}</p>
               )}
             </div>
 
             <div>
               <label
                 htmlFor="reg-password"
-                style={{
-                  display: "block",
-                  fontWeight: 600,
-                  fontSize: "0.85rem",
-                  marginBottom: "0.4rem",
-                  color: "var(--foreground)",
-                }}
+                className="block font-semibold text-sm text-slate-700 mb-1.5"
               >
                 Mot de passe
               </label>
@@ -314,43 +238,28 @@ function InscriptionContent() {
                   setPassword(e.target.value);
                   setErrors((prev) => ({ ...prev, password: undefined }));
                 }}
-                style={{
-                  width: "100%",
-                  padding: "0.6rem 0.8rem",
-                  border: `1px solid ${errors.password ? "oklch(0.577 0.245 27.325)" : "var(--border)"}`,
-                  borderRadius: "var(--radius)",
-                  fontSize: "0.95rem",
-                  outline: "none",
-                  boxSizing: "border-box",
-                }}
+                className={`w-full px-4 py-3 rounded-xl text-slate-800 text-sm bg-white border ${
+                  errors.password
+                    ? "border-red-400 focus:ring-red-100"
+                    : "border-slate-200 focus:border-purple-400 focus:ring-purple-100"
+                } focus:outline-none focus:ring-4 transition-all`}
               />
               {errors.password && (
-                <p
-                  style={{
-                    color: "oklch(0.577 0.245 27.325)",
-                    fontSize: "0.8rem",
-                    marginTop: "0.3rem",
-                  }}
-                >
-                  {errors.password}
-                </p>
+                <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.password}</p>
               )}
               {!errors.password && password.length > 0 && (
-                <div style={{ marginTop: "0.4rem", display: "flex", gap: "0.2rem" }}>
+                <div className="mt-2 flex gap-1.5">
                   {[1, 2, 3].map((l) => (
                     <div
                       key={l}
+                      className="flex-1 h-1.5 rounded-full transition-all duration-300"
                       style={{
-                        flex: 1,
-                        height: 3,
-                        borderRadius: 99,
                         background:
                           password.length >= l * 4
                             ? password.length >= 10
-                              ? "oklch(0.6 0.2 145)"
-                              : "oklch(0.7 0.2 50)"
-                            : "var(--border)",
-                        transition: "background 0.3s",
+                              ? "#10B981"
+                              : "#F59E0B"
+                            : "#E2E8F0",
                       }}
                     />
                   ))}
@@ -359,37 +268,20 @@ function InscriptionContent() {
             </div>
 
             <button
-              type="submit"
+              type="button"
+              onClick={() => handleSubmit()}
               disabled={loading}
-              style={{
-                width: "100%",
-                padding: "0.75rem",
-                background: loading ? "var(--muted)" : "var(--primary)",
-                color: "#fff",
-                border: "none",
-                borderRadius: "var(--radius)",
-                fontWeight: 700,
-                fontSize: "0.95rem",
-                cursor: loading ? "not-allowed" : "pointer",
-                marginTop: "0.25rem",
-              }}
+              className="w-full py-3.5 mt-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold rounded-xl shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
             >
               {loading ? "Création du compte…" : "S'inscrire"}
             </button>
           </form>
 
-          <p
-            style={{
-              textAlign: "center",
-              marginTop: "1.5rem",
-              fontSize: "0.85rem",
-              color: "var(--muted-foreground)",
-            }}
-          >
+          <p className="text-center mt-8 text-sm text-slate-500 font-medium">
             Déjà un compte ?{" "}
             <Link
               href="/connexion"
-              style={{ color: "var(--primary)", fontWeight: 600, textDecoration: "none" }}
+              className="text-purple-600 hover:text-purple-700 hover:underline"
             >
               Se connecter
             </Link>
@@ -402,7 +294,13 @@ function InscriptionContent() {
 
 export default function InscriptionPage() {
   return (
-    <Suspense fallback={<div>Chargement...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-slate-50">
+          Chargement...
+        </div>
+      }
+    >
       <InscriptionContent />
     </Suspense>
   );
