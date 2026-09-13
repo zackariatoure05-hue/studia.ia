@@ -169,7 +169,11 @@ export default function HomePage() {
                 ></div>
 
                 <div
-                  className="hero-mockup-transform relative w-full max-w-[800px] rounded-2xl md:rounded-[2.5rem] overflow-hidden border border-slate-200/50 shadow-2xl shadow-indigo-900/20"
+                  className="relative w-full max-w-[800px] rounded-2xl md:rounded-[2.5rem] overflow-hidden border border-slate-200/50 shadow-2xl shadow-indigo-900/20"
+                  style={{
+                    transform: "perspective(1200px) rotateY(-15deg) rotateX(5deg)",
+                    transformStyle: "preserve-3d",
+                  }}
                 >
                   <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent z-10 pointer-events-none rounded-[2.5rem]"></div>
                   <AnimatedHeroMockup />
@@ -438,15 +442,6 @@ export default function HomePage() {
           </p>
         </div>
       </footer>
-
-      <style>{`
-        @media (min-width: 768px) {
-          .hero-mockup-transform {
-            transform: perspective(1200px) rotateY(-15deg) rotateX(5deg);
-            transform-style: preserve-3d;
-          }
-        }
-      `}</style>
     </div>
   );
 }
