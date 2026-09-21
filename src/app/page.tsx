@@ -116,7 +116,7 @@ export default function HomePage() {
         {/* ── HERO SECTION ── */}
         <section className="relative pt-24 pb-32 px-6 overflow-hidden perspective-[2000px]">
           {/* Animated Background Gradients & Floating Shapes */}
-          <div className="absolute top-0 right-0 w-full max-w-2xl h-[500px] bg-gradient-to-br from-indigo-500/30 via-purple-500/20 to-pink-500/30 blur-[120px] rounded-full -z-10 animate-pulse duration-[3000ms]"></div>
+          <div className="absolute top-0 right-0 w-full max-w-2xl h-[500px] bg-gradient-to-br from-indigo-500/30 via-purple-500/20 to-pink-500/30 blur-[120px] rounded-full -z-10 animate-pulse [animation-duration:3000ms]"></div>
           <div className="absolute -top-20 -left-20 w-[400px] h-[400px] bg-blue-500/20 blur-[100px] rounded-full -z-10"></div>
 
           <div className="max-w-7xl mx-auto">
