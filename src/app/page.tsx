@@ -128,7 +128,7 @@ export default function HomePage() {
                 </div>
 
                 <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold text-slate-900 tracking-tight leading-tight sm:leading-[1.1] mb-6 sm:mb-8 animate-in slide-in-from-left-6 fade-in duration-700 delay-100 break-words">
-                  Concentre-toi sur l'écoute.{" "}
+                  Concentre-toi sur l'écoute.
                   <br className="hidden sm:block" />
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-[length:200%_auto] animate-gradient block sm:inline-block mt-1 sm:mt-0">
                     StudIA prend tes notes.
