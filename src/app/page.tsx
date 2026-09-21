@@ -140,10 +140,10 @@ export default function HomePage() {
                   flashcards instantanément. Divise ton temps de révision par deux.
                 </p>
 
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-4 animate-in slide-in-from-left-10 fade-in duration-700 delay-300 w-full">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-4 w-full">
                   <Link
                     href="/inscription"
-                    className="bg-indigo-600 text-white px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-full text-xs sm:text-sm md:text-base font-bold hover:bg-indigo-700 hover:scale-[1.02] sm:hover:scale-105 hover:shadow-indigo-600/40 transition-all shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-1.5 sm:gap-2 w-full sm:w-auto text-center shrink-0"
+                    className="bg-indigo-600 text-white px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-full text-xs sm:text-sm md:text-base font-bold hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-1.5 sm:gap-2 w-full sm:w-auto text-center shrink-0"
                   >
                     Commencer maintenant <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
                   </Link>
