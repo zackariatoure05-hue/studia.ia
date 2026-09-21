@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, Suspense, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import Modal from "@/components/ui/Modal";
 
 function IconGoogle() {
   return (
@@ -45,6 +46,10 @@ function InscriptionContent() {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<Errors>({});
   const [loading, setLoading] = useState(false);
+  const [modalState, setModalState] = useState<{ isOpen: boolean; message: string }>({
+    isOpen: false,
+    message: "",
+  });
 
   // 3D Tilt Effect State
   const cardRef = useRef<HTMLDivElement>(null);
@@ -83,7 +88,10 @@ function InscriptionContent() {
   async function handleSubmit(e?: React.FormEvent) {
     if (e) e.preventDefault();
     if (!validate()) {
-      alert("Erreur de validation (vérifie les champs en rouge)");
+      setModalState({
+        isOpen: true,
+        message: "Erreur de validation (vérifie les champs en rouge)",
+      });
       return;
     }
     setLoading(true);
@@ -93,16 +101,15 @@ function InscriptionContent() {
       if (!result.ok) {
         setErrors({ global: result.error });
         setLoading(false);
-        alert("Erreur: " + result.error);
+        setModalState({ isOpen: true, message: "Erreur: " + result.error });
         return;
       }
-      alert("Succès ! Redirection vers onboarding...");
       window.location.href = "/onboarding";
     } catch (err: any) {
       console.error(err);
       setErrors({ global: err.message || "Erreur inattendue" });
       setLoading(false);
-      alert("Erreur inattendue: " + err.message);
+      setModalState({ isOpen: true, message: "Erreur inattendue: " + err.message });
     }
   }
 
@@ -145,7 +152,9 @@ function InscriptionContent() {
           <button
             type="button"
             className="w-full py-3 px-4 flex items-center justify-center gap-3 bg-white border border-slate-200 rounded-xl text-slate-700 font-semibold text-sm hover:bg-slate-50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 mb-6"
-            onClick={() => alert("OAuth Google disponible prochainement.")}
+            onClick={() =>
+              setModalState({ isOpen: true, message: "OAuth Google disponible prochainement." })
+            }
           >
             <IconGoogle /> Continuer avec Google
           </button>
@@ -288,6 +297,20 @@ function InscriptionContent() {
           </p>
         </div>
       </main>
+
+      <Modal
+        isOpen={modalState.isOpen}
+        onClose={() => setModalState({ ...modalState, isOpen: false })}
+        title="Information"
+      >
+        <div className="text-slate-600 mb-6 font-medium leading-relaxed">{modalState.message}</div>
+        <button
+          onClick={() => setModalState({ ...modalState, isOpen: false })}
+          className="w-full bg-slate-900 text-white rounded-xl py-3 font-bold hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/20"
+        >
+          Compris
+        </button>
+      </Modal>
     </div>
   );
 }

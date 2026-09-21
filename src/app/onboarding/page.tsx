@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useData } from "@/contexts/DataContext";
+import Modal from "@/components/ui/Modal";
 import {
   MapPin,
   User as UserIcon,
@@ -62,9 +63,15 @@ export default function OnboardingPage() {
   // Step 3: Avatar
   const [avatarId, setAvatarId] = useState(AVATARS[0].id);
 
+  // Modal State
+  const [modalState, setModalState] = useState<{ isOpen: boolean; message: string }>({
+    isOpen: false,
+    message: "",
+  });
+
   const handleNextToFaculte = () => {
     if (!prenom.trim() || !nom.trim() || !ville.trim()) {
-      alert("Prénom, nom et ville sont requis.");
+      setModalState({ isOpen: true, message: "Prénom, nom et ville sont requis." });
       return;
     }
     setStep(2);
@@ -72,7 +79,7 @@ export default function OnboardingPage() {
 
   const handleNextToAvatar = () => {
     if (!selectedFaculteId && !newFaculteName.trim()) {
-      alert("Veuillez sélectionner ou créer une faculté.");
+      setModalState({ isOpen: true, message: "Veuillez sélectionner ou créer une faculté." });
       return;
     }
     setStep(3);
@@ -500,6 +507,20 @@ export default function OnboardingPage() {
           </div>
         )}
       </div>
+
+      <Modal
+        isOpen={modalState.isOpen}
+        onClose={() => setModalState({ ...modalState, isOpen: false })}
+        title="Information"
+      >
+        <div className="text-slate-600 mb-6 font-medium leading-relaxed">{modalState.message}</div>
+        <button
+          onClick={() => setModalState({ ...modalState, isOpen: false })}
+          className="w-full bg-slate-900 text-white rounded-xl py-3 font-bold hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/20"
+        >
+          Compris
+        </button>
+      </Modal>
     </div>
   );
 }

@@ -127,10 +127,10 @@ export default function HomePage() {
                   <Sparkles className="w-4 h-4" /> La nouvelle ère de l'apprentissage
                 </div>
 
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 tracking-tight leading-[1.1] mb-8 animate-in slide-in-from-left-6 fade-in duration-700 delay-100">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold text-slate-900 tracking-tight leading-[1.2] sm:leading-[1.1] mb-6 sm:mb-8 animate-in slide-in-from-left-6 fade-in duration-700 delay-100">
                   Concentre-toi sur l'écoute.
-                  <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-[length:200%_auto] animate-gradient">
+                  <br className="hidden sm:block" />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-[length:200%_auto] animate-gradient sm:mt-0 mt-2 inline-block">
                     StudIA prend tes notes.
                   </span>
                 </h1>
@@ -140,16 +140,16 @@ export default function HomePage() {
                   flashcards instantanément. Divise ton temps de révision par deux.
                 </p>
 
-                <div className="flex flex-col sm:flex-row items-center gap-4 animate-in slide-in-from-left-10 fade-in duration-700 delay-300">
+                <div className="flex flex-col sm:flex-row items-center gap-4 animate-in slide-in-from-left-10 fade-in duration-700 delay-300 w-full">
                   <Link
                     href="/inscription"
-                    className="bg-indigo-600 text-white px-8 py-4 rounded-full text-lg font-bold hover:bg-indigo-700 hover:scale-105 hover:shadow-indigo-600/40 transition-all shadow-xl shadow-indigo-600/30 flex items-center gap-2 w-full sm:w-auto justify-center"
+                    className="bg-indigo-600 text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-full text-base sm:text-lg font-bold hover:bg-indigo-700 hover:scale-105 hover:shadow-indigo-600/40 transition-all shadow-xl shadow-indigo-600/30 flex items-center justify-center gap-2 w-full sm:w-auto"
                   >
                     Commencer maintenant <ChevronRight className="w-5 h-5" />
                   </Link>
                   <Link
                     href="#fonctionnalites"
-                    className="bg-white text-slate-700 border border-slate-200 px-8 py-4 rounded-full text-lg font-bold hover:bg-slate-50 transition-colors w-full sm:w-auto justify-center flex items-center"
+                    className="bg-white text-slate-700 border border-slate-200 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full text-base sm:text-lg font-bold hover:bg-slate-50 transition-colors flex items-center justify-center w-full sm:w-auto"
                   >
                     Découvrir comment
                   </Link>
@@ -169,7 +169,7 @@ export default function HomePage() {
                 ></div>
 
                 <div
-                  className="relative w-full max-w-[800px] rounded-2xl md:rounded-[2.5rem] overflow-hidden border border-slate-200/50 shadow-2xl shadow-indigo-900/20"
+                  className="relative w-full max-w-[800px] rounded-2xl md:rounded-[2.5rem] overflow-hidden border border-slate-200/50 shadow-2xl shadow-indigo-900/20 transform scale-90 sm:scale-100"
                   style={{
                     transform: "perspective(1200px) rotateY(-15deg) rotateX(5deg)",
                     transformStyle: "preserve-3d",

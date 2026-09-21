@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useData } from "@/contexts/DataContext";
 import Breadcrumb from "@/components/dashboard/Breadcrumb";
+import Modal from "@/components/ui/Modal";
 
 export default function ParametresPage() {
   const { user, logout, updateUser } = useAuth();
@@ -12,6 +13,10 @@ export default function ParametresPage() {
   const [email, setEmail] = useState(user?.email ?? "");
   const [faculteId, setFaculteId] = useState(user?.faculteId ?? "");
   const [saved, setSaved] = useState(false);
+  const [modalState, setModalState] = useState<{ isOpen: boolean; message: string }>({
+    isOpen: false,
+    message: "",
+  });
 
   function handleSave(e: React.FormEvent) {
     e.preventDefault();
@@ -363,7 +368,7 @@ export default function ParametresPage() {
           <button
             onClick={() => {
               if (confirm("Supprimer toutes vos données ?"))
-                alert("Données supprimées (simulation).");
+                setModalState({ isOpen: true, message: "Données supprimées (simulation)." });
             }}
             style={{
               padding: "0.6rem 1.25rem",
@@ -397,6 +402,20 @@ export default function ParametresPage() {
           </button>
         </div>
       </div>
+
+      <Modal
+        isOpen={modalState.isOpen}
+        onClose={() => setModalState({ ...modalState, isOpen: false })}
+        title="Information"
+      >
+        <div className="text-slate-600 mb-6 font-medium leading-relaxed">{modalState.message}</div>
+        <button
+          onClick={() => setModalState({ ...modalState, isOpen: false })}
+          className="w-full bg-slate-900 text-white rounded-xl py-3 font-bold hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/20"
+        >
+          Compris
+        </button>
+      </Modal>
     </>
   );
 }

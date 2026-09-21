@@ -4,10 +4,16 @@ import { useData } from "@/contexts/DataContext";
 import { useRouter } from "next/navigation";
 import { Library, Download, Trash2, ArrowRight, FileText, Headphones } from "lucide-react";
 import Markdown from "react-markdown";
+import { useState } from "react";
+import Modal from "@/components/ui/Modal";
 
 export default function BibliothequePage() {
   const { cours, matieres, resumes, deleteCours } = useData();
   const router = useRouter();
+  const [modalState, setModalState] = useState<{ isOpen: boolean; message: string }>({
+    isOpen: false,
+    message: "",
+  });
 
   // Trier les cours par date de création (les plus récents en premier)
   const sortedCours = [...cours].sort(
@@ -71,7 +77,10 @@ export default function BibliothequePage() {
       a.click();
       document.body.removeChild(a);
     } else {
-      alert("Ce cours n'a pas d'audio enregistré ou le fichier n'est plus disponible.");
+      setModalState({
+        isOpen: true,
+        message: "Ce cours n'a pas d'audio enregistré ou le fichier n'est plus disponible.",
+      });
     }
   };
 
@@ -180,6 +189,20 @@ export default function BibliothequePage() {
           })}
         </div>
       )}
+
+      <Modal
+        isOpen={modalState.isOpen}
+        onClose={() => setModalState({ ...modalState, isOpen: false })}
+        title="Information"
+      >
+        <div className="text-slate-600 mb-6 font-medium leading-relaxed">{modalState.message}</div>
+        <button
+          onClick={() => setModalState({ ...modalState, isOpen: false })}
+          className="w-full bg-slate-900 text-white rounded-xl py-3 font-bold hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/20"
+        >
+          Compris
+        </button>
+      </Modal>
     </div>
   );
 }

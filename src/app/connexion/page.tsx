@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import Modal from "@/components/ui/Modal";
 
 function IconGoogle() {
   return (
@@ -41,6 +42,10 @@ export default function ConnexionPage() {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<Errors>({});
   const [loading, setLoading] = useState(false);
+  const [modalState, setModalState] = useState<{ isOpen: boolean; message: string }>({
+    isOpen: false,
+    message: "",
+  });
 
   function validate(): boolean {
     const e: Errors = {};
@@ -149,7 +154,9 @@ export default function ConnexionPage() {
               color: "var(--foreground)",
               marginBottom: "1.5rem",
             }}
-            onClick={() => alert("OAuth Google disponible prochainement.")}
+            onClick={() =>
+              setModalState({ isOpen: true, message: "OAuth Google disponible prochainement." })
+            }
           >
             <IconGoogle /> Continuer avec Google
           </button>
@@ -256,7 +263,12 @@ export default function ConnexionPage() {
                 </label>
                 <button
                   type="button"
-                  onClick={() => alert("Réinitialisation disponible prochainement.")}
+                  onClick={() =>
+                    setModalState({
+                      isOpen: true,
+                      message: "Réinitialisation disponible prochainement.",
+                    })
+                  }
                   style={{
                     background: "none",
                     border: "none",
@@ -341,6 +353,20 @@ export default function ConnexionPage() {
           </p>
         </div>
       </main>
+
+      <Modal
+        isOpen={modalState.isOpen}
+        onClose={() => setModalState({ ...modalState, isOpen: false })}
+        title="Information"
+      >
+        <div className="text-slate-600 mb-6 font-medium leading-relaxed">{modalState.message}</div>
+        <button
+          onClick={() => setModalState({ ...modalState, isOpen: false })}
+          className="w-full bg-slate-900 text-white rounded-xl py-3 font-bold hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/20"
+        >
+          Compris
+        </button>
+      </Modal>
     </div>
   );
 }
