@@ -114,42 +114,42 @@ export default function HomePage() {
 
       <main className="flex-1 pt-20">
         {/* ── HERO SECTION ── */}
-        <section className="relative pt-24 pb-32 px-6 overflow-hidden perspective-[2000px]">
+        <section className="relative pt-20 sm:pt-24 pb-20 sm:pb-32 px-4 sm:px-6 overflow-hidden perspective-[2000px]">
           {/* Animated Background Gradients & Floating Shapes */}
           <div className="absolute top-0 right-0 w-full max-w-2xl h-[500px] bg-gradient-to-br from-indigo-500/30 via-purple-500/20 to-pink-500/30 blur-[120px] rounded-full -z-10 animate-pulse [animation-duration:3000ms]"></div>
           <div className="absolute -top-20 -left-20 w-[400px] h-[400px] bg-blue-500/20 blur-[100px] rounded-full -z-10"></div>
 
           <div className="max-w-7xl mx-auto">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
               {/* Left Column: Text */}
               <div className="text-left z-10 relative">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50/80 backdrop-blur-sm border border-indigo-100 text-indigo-700 font-semibold text-sm mb-8 animate-in slide-in-from-left-4 fade-in duration-700 shadow-sm">
-                  <Sparkles className="w-4 h-4" /> La nouvelle ère de l'apprentissage
+                <div className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-indigo-50/80 backdrop-blur-sm border border-indigo-100 text-indigo-700 font-semibold text-xs sm:text-sm mb-6 sm:mb-8 animate-in slide-in-from-left-4 fade-in duration-700 shadow-sm">
+                  <Sparkles className="w-4 h-4 shrink-0" /> La nouvelle ère de l'apprentissage
                 </div>
 
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold text-slate-900 tracking-tight leading-[1.2] sm:leading-[1.1] mb-6 sm:mb-8 animate-in slide-in-from-left-6 fade-in duration-700 delay-100">
-                  Concentre-toi sur l'écoute.
+                <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold text-slate-900 tracking-tight leading-tight sm:leading-[1.1] mb-6 sm:mb-8 animate-in slide-in-from-left-6 fade-in duration-700 delay-100 break-words">
+                  Concentre-toi sur l'écoute.{" "}
                   <br className="hidden sm:block" />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-[length:200%_auto] animate-gradient sm:mt-0 mt-2 inline-block">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-[length:200%_auto] animate-gradient block sm:inline-block mt-1 sm:mt-0">
                     StudIA prend tes notes.
                   </span>
                 </h1>
 
-                <p className="text-lg md:text-xl text-slate-600 mb-10 leading-relaxed animate-in slide-in-from-left-8 fade-in duration-700 delay-200">
+                <p className="text-base sm:text-lg md:text-xl text-slate-600 mb-8 sm:mb-10 leading-relaxed animate-in slide-in-from-left-8 fade-in duration-700 delay-200">
                   L'IA qui enregistre tes cours, les transcrit en direct, et génère tes résumés et
                   flashcards instantanément. Divise ton temps de révision par deux.
                 </p>
 
-                <div className="flex flex-col sm:flex-row items-center gap-4 animate-in slide-in-from-left-10 fade-in duration-700 delay-300 w-full">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 animate-in slide-in-from-left-10 fade-in duration-700 delay-300 w-full">
                   <Link
                     href="/inscription"
-                    className="bg-indigo-600 text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-full text-base sm:text-lg font-bold hover:bg-indigo-700 hover:scale-105 hover:shadow-indigo-600/40 transition-all shadow-xl shadow-indigo-600/30 flex items-center justify-center gap-2 w-full sm:w-auto"
+                    className="bg-indigo-600 text-white px-5 sm:px-8 py-3.5 sm:py-4 rounded-full text-sm sm:text-base md:text-lg font-bold hover:bg-indigo-700 hover:scale-[1.02] sm:hover:scale-105 hover:shadow-indigo-600/40 transition-all shadow-xl shadow-indigo-600/30 flex items-center justify-center gap-2 w-full sm:w-auto text-center shrink-0"
                   >
-                    Commencer maintenant <ChevronRight className="w-5 h-5" />
+                    Commencer maintenant <ChevronRight className="w-5 h-5 shrink-0" />
                   </Link>
                   <Link
                     href="#fonctionnalites"
-                    className="bg-white text-slate-700 border border-slate-200 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full text-base sm:text-lg font-bold hover:bg-slate-50 transition-colors flex items-center justify-center w-full sm:w-auto"
+                    className="bg-white text-slate-700 border border-slate-200 px-5 sm:px-8 py-3.5 sm:py-4 rounded-full text-sm sm:text-base md:text-lg font-bold hover:bg-slate-50 transition-colors flex items-center justify-center w-full sm:w-auto text-center shrink-0"
                   >
                     Découvrir comment
                   </Link>
@@ -157,7 +157,7 @@ export default function HomePage() {
               </div>
 
               {/* Right Column: 3D Mockup */}
-              <div className="relative animate-in zoom-in-95 fade-in duration-1000 delay-500 lg:h-[600px] flex items-center justify-center">
+              <div className="relative animate-in zoom-in-95 fade-in duration-1000 delay-500 lg:h-[600px] flex items-center justify-center mt-6 lg:mt-0">
                 {/* Floating elements behind mockup */}
                 <div
                   className="absolute top-10 right-10 w-24 h-24 bg-gradient-to-br from-pink-400 to-purple-500 rounded-3xl opacity-50 blur-2xl animate-bounce"
@@ -169,9 +169,9 @@ export default function HomePage() {
                 ></div>
 
                 <div
-                  className="relative w-full max-w-[800px] rounded-2xl md:rounded-[2.5rem] overflow-hidden border border-slate-200/50 shadow-2xl shadow-indigo-900/20 transform scale-90 sm:scale-100"
+                  className="relative w-full max-w-[800px] rounded-2xl md:rounded-[2.5rem] overflow-hidden border border-slate-200/50 shadow-2xl shadow-indigo-900/20 transform scale-95 sm:scale-100"
                   style={{
-                    transform: "perspective(1200px) rotateY(-15deg) rotateX(5deg)",
+                    transform: "perspective(1200px) rotateY(-10deg) rotateX(5deg)",
                     transformStyle: "preserve-3d",
                   }}
                 >
