@@ -140,7 +140,7 @@ export default function HomePage() {
                   flashcards instantanément. Divise ton temps de révision par deux.
                 </p>
 
-                <div className="flex flex-row items-center justify-center sm:justify-start gap-3 sm:gap-4 flex-wrap">
+                <div className="flex flex-row items-center justify-start gap-3 sm:gap-4 flex-wrap">
                   <Link
                     href="/inscription"
                     className="bg-indigo-600 text-white px-4 py-2.5 sm:px-6 sm:py-3.5 rounded-full text-xs sm:text-sm md:text-base font-bold hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-600/30 flex items-center gap-1.5 sm:gap-2"
