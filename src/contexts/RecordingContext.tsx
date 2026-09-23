@@ -75,13 +75,11 @@ export function RecordingProvider({ children }: { children: React.ReactNode }) {
           echoCancellation: true,
           noiseSuppression: true,
           autoGainControl: true,
-          channelCount: 1,
-          sampleRate: 48000,
-          sampleSize: 16,
         },
       });
 
-      const audioContext = new window.AudioContext();
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      const audioContext = new AudioContextClass();
       const source = audioContext.createMediaStreamSource(stream);
       const gainNode = audioContext.createGain();
       gainNode.gain.value = 3.0; // Amplification x3
@@ -108,54 +106,48 @@ export function RecordingProvider({ children }: { children: React.ReactNode }) {
 
       const SpeechRecognition =
         (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
       if (!SpeechRecognition) {
-        setErrorModal({
-          isOpen: true,
-          message:
-            "Votre navigateur ne supporte pas la reconnaissance vocale (essayez Chrome ou Safari).",
-        });
-        return;
+        console.warn("La reconnaissance vocale en direct n'est pas supportée par ce navigateur.");
+      } else {
+        const recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = "fr-FR";
+
+        recognition.onresult = (event: any) => {
+          let finalTranscript = "";
+          let interimTranscript = "";
+
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            const transcript = event.results[i][0].transcript;
+            if (event.results[i].isFinal) {
+              finalTranscript += transcript + " ";
+            } else {
+              interimTranscript += transcript;
+            }
+          }
+
+          setTranscription((prev) => prev + finalTranscript);
+          setInterimTranscription(interimTranscript);
+        };
+
+        recognition.onerror = (event: any) => {
+          console.error("Erreur de reconnaissance vocale", event.error);
+        };
+
+        recognition.onend = () => {
+          if (recognitionRef.current && isRecordingRef.current && !isPausedRef.current) {
+            try {
+              recognitionRef.current.start();
+            } catch (e) {}
+          }
+        };
+
+        recognitionRef.current = recognition;
+        recognition.start();
       }
 
-      const recognition = new SpeechRecognition();
-      recognition.continuous = true;
-      recognition.interimResults = true;
-      recognition.lang = "fr-FR";
-
-      recognition.onresult = (event: any) => {
-        let finalTranscript = "";
-        let interimTranscript = "";
-
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          const transcript = event.results[i][0].transcript;
-          if (event.results[i].isFinal) {
-            finalTranscript += transcript + " ";
-          } else {
-            interimTranscript += transcript;
-          }
-        }
-
-        setTranscription((prev) => prev + finalTranscript);
-        setInterimTranscription(interimTranscript);
-      };
-
-      recognition.onerror = (event: any) => {
-        console.error("Erreur de reconnaissance vocale", event.error);
-      };
-
-      recognition.onend = () => {
-        // Relancer si l'utilisateur n'a pas explicitement arrêté ET pas en pause
-        if (recognitionRef.current && isRecordingRef.current && !isPausedRef.current) {
-          try {
-            recognitionRef.current.start();
-          } catch (e) {
-            // Ignore start errors
-          }
-        }
-      };
-
-      recognitionRef.current = recognition;
-      recognition.start();
       mediaRecorder.start();
 
       isRecordingRef.current = true;
