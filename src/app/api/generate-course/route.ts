@@ -55,42 +55,53 @@ export async function POST(req: NextRequest) {
 
     const config = PLAN_CONFIG[plan as keyof typeof PLAN_CONFIG] ?? PLAN_CONFIG.decouverte;
 
-    const prompt = `Tu es un assistant pédagogique expert pour étudiants universitaires français.
+    const prompt = `Tu es un professeur d'université expert dans la structuration des connaissances et l'apprentissage actif.
+Ta mission est de transformer un contenu brut en un matériel de révision de très haute qualité, parfaitement structuré et prêt à être mémorisé.
 
 **Contexte du cours :**
 - Titre : ${titre}
 - Matière : ${matiere || "Non précisée"}
-- Plan de l'étudiant : ${plan} (niveau d'approfondissement : ${config.depthInstruction})
+- Niveau d'exigence : ${config.depthInstruction}
 
-**Contenu brut à analyser (transcription ou texte collé) :**
+**Contenu brut à analyser :**
 \`\`\`
-${transcription.slice(0, 8000)}
+${transcription.slice(0, 10000)}
 \`\`\`
 
-**Ta mission :**
-${config.depthInstruction}
-${config.enrichInstruction}
+**INSTRUCTIONS - 1. Le Résumé (resume) :**
+- ${config.depthInstruction}
+- ${config.enrichInstruction}
+- Structure le contenu avec une logique implacable. Commence par une ## Introduction. 
+- Utilise une hiérarchie claire (## Titre principal, ### Sous-titre).
+- Mets en **gras** les concepts clés, les dates, les noms importants ou les formules.
+- Utilise des listes à puces pour les énumérations.
+- INTERDICTION ABSOLUE de recopier le texte brut mot pour mot (pas de copier-coller).
+- C'est une VRAIE SYNTHÈSE : tu dois regrouper les idées similaires, reformuler de manière claire et concise.
+- INTERDICTION de te répéter. Évite d'utiliser deux fois la même phrase ou les mêmes mots pour dire la même chose dans des sections différentes.
+- Si le texte original se répète, tu dois fusionner les informations pour n'en faire qu'une seule explication claire.
 
-**RÈGLES ABSOLUES :**
-1. NE JAMAIS recopier la transcription brute. C'est une synthèse pédagogique reformulée et enrichie.
-2. Le résumé doit être en Markdown structuré avec des titres (##, ###), listes à puces, et **gras** pour les concepts clés.
-3. Commence TOUJOURS par une introduction qui contextualise le sujet dans la matière.
-4. Génère exactement ${config.flashcardsCount} flashcards question/réponse précises, cohérentes avec le contenu RÉEL (pas génériques).
-5. Les flashcards doivent couvrir des définitions, des mécanismes, des applications, des distinctions importantes.
-6. Réponds UNIQUEMENT en JSON valide, sans markdown autour du JSON.
+**INSTRUCTIONS - 2. Les Points Clés (pointsCles) :**
+- Extrais les idées maîtresses absolues (minimum 5). Ce que l'étudiant doit retenir s'il n'avait que 3 minutes pour réviser.
 
-**Format de réponse JSON STRICT :**
+**INSTRUCTIONS - 3. Les Flashcards (flashcards) :**
+- Génère EXACTEMENT ${config.flashcardsCount} flashcards.
+- Ce doivent être de VRAIES flashcards de type "Anki" pour l'apprentissage actif.
+- INTERDIT : Les questions vagues ("Que dit le texte ?", "Quel est le sujet ?").
+- OBLIGATOIRE : Des questions très spécifiques (ex: "Quelle est la définition de X ?", "Quelles sont les 3 causes de Y ?", "Quelle est la différence entre X et Y ?").
+- La réponse doit être concise, directe et mémorisable (1 à 3 phrases max).
+
+**Format de réponse exigé :**
+Tu dois IMPÉRATIVEMENT répondre avec un objet JSON strictement valide.
 {
-  "resume": "# ${titre}\\n\\n## Introduction\\n...(contenu markdown complet)...",
-  "pointsCles": ["point 1", "point 2", "...", "point N"],
+  "resume": "# ${titre}\\n\\n## Introduction\\n...", 
+  "pointsCles": ["point clé 1", "point clé 2"],
   "flashcards": [
-    {"question": "...", "reponse": "..."},
-    ...
+    {"question": "Question précise ?", "reponse": "Réponse concise et directe."}
   ]
 }`;
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
