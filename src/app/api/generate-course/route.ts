@@ -64,6 +64,7 @@ Ta mission est de transformer un contenu brut en un matériel de révision de tr
 - Niveau d'exigence : ${config.depthInstruction}
 
 **Contenu brut à analyser :**
+(Attention: Si ce texte provient d'une transcription vocale automatique, il peut contenir de nombreuses fautes de frappe, mots manquants ou mots mal compris. Corrige implicitement ces erreurs en te basant sur le contexte avant de résumer).
 \`\`\`
 ${transcription.slice(0, 10000)}
 \`\`\`
@@ -108,7 +109,7 @@ Tu dois IMPÉRATIVEMENT répondre avec un objet JSON strictement valide.
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
           generationConfig: {
-            temperature: 0.4,
+            temperature: 0.7,
             maxOutputTokens: plan === "etudiant_plus" ? 8192 : plan === "etudiant" ? 6000 : 3000,
             responseMimeType: "application/json",
           },

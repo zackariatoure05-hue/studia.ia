@@ -16,7 +16,7 @@ type ApiSubject = { id: string; nom: string; couleur: string };
 
 export default function NouveauCoursPage() {
   const router = useRouter();
-  const { addCoursTexte, addCoursAudio } = useData();
+  const { addCoursTexte, addCoursAudio, addMatiere } = useData();
   const { user, audioLimitMinutes, audioRemainingMinutes, addAudioMinutes } = useAuth();
 
   const [mode, setMode] = useState<"texte" | "audio">("texte");
@@ -171,8 +171,8 @@ export default function NouveauCoursPage() {
       setErrorModal({ isOpen: true, message: "Veuillez entrer un titre pour votre cours." });
       return;
     }
-    if (!matiereId) {
-      setErrorModal({ isOpen: true, message: "Veuillez sélectionner une matière." });
+    if (!matiereId.trim()) {
+      setErrorModal({ isOpen: true, message: "Veuillez renseigner une matière." });
       return;
     }
     if (mode === "texte" && !contenu.trim()) {
@@ -205,7 +205,26 @@ export default function NouveauCoursPage() {
               : "")
           : contenu.trim();
 
-      const matiereNom = subjects.find((m: ApiSubject) => m.id === matiereId)?.nom || "";
+      // Determine the matiere (create if new)
+      let finalMatiereId = matiereId;
+      let matiereNom = matiereId.trim();
+
+      // Check if user selected an existing subject by name
+      const existingMatiere = subjects.find(
+        (m) => m.nom.toLowerCase() === matiereNom.toLowerCase()
+      );
+      if (existingMatiere) {
+        finalMatiereId = existingMatiere.id;
+        matiereNom = existingMatiere.nom;
+      } else {
+        // User typed a new subject, create it if they have a faculty
+        const fid = user?.faculteId || "fac_default";
+        // generate a random color or pick a default
+        const color = "oklch(0.7 0.1 250)"; 
+        const newMatiere = addMatiere(fid, matiereNom, color);
+        finalMatiereId = newMatiere.id;
+      }
+
       const plan = user?.plan || "gratuit";
 
       // Appel de notre API d'IA
@@ -234,14 +253,14 @@ export default function NouveauCoursPage() {
         }
 
         newCours = addCoursAudio(
-          matiereId,
+          finalMatiereId,
           titre.trim(),
           texteAAnalyser,
           recordingTime || 120,
           aiGenerated
         );
       } else {
-        newCours = addCoursTexte(matiereId, titre.trim(), contenu.trim(), aiGenerated);
+        newCours = addCoursTexte(finalMatiereId, titre.trim(), contenu.trim(), aiGenerated);
       }
 
       router.push(`/tableau-de-bord/cours/${newCours.id}`);
@@ -381,9 +400,12 @@ export default function NouveauCoursPage() {
                 </span>
               )}
             </label>
-            <select
+            <input
               id="matiere"
+              type="text"
+              list="matieres_list"
               required
+              placeholder="Ex : Mathématiques, Droit pénal..."
               value={matiereId}
               onChange={(e) => setMatiereId(e.target.value)}
               disabled={loading || loadingSubjects}
@@ -396,39 +418,23 @@ export default function NouveauCoursPage() {
                 outline: "none",
                 boxSizing: "border-box",
                 background: loading || loadingSubjects ? "var(--muted)" : "#fff",
-                color: matiereId ? "var(--foreground)" : "var(--muted-foreground)",
+                color: "var(--foreground)",
+              }}
+            />
+            <datalist id="matieres_list">
+              {subjects.map((s) => (
+                <option key={s.id} value={s.nom} />
+              ))}
+            </datalist>
+            <p
+              style={{
+                fontSize: "0.75rem",
+                color: "var(--muted-foreground)",
+                marginTop: "0.35rem",
               }}
             >
-              <option value="" disabled>
-                {loadingSubjects
-                  ? "Chargement..."
-                  : subjects.length === 0 && !user?.faculteId
-                    ? "Configurer ta faculté d'abord"
-                    : "Sélectionne une matière..."}
-              </option>
-              {subjects.map((s) => (
-                <option key={s.id} value={s.id} style={{ color: "var(--foreground)" }}>
-                  {s.nom}
-                </option>
-              ))}
-            </select>
-            {!user?.faculteId && (
-              <p
-                style={{
-                  fontSize: "0.75rem",
-                  color: "var(--muted-foreground)",
-                  marginTop: "0.35rem",
-                }}
-              >
-                <a
-                  href="/tableau-de-bord/parametres"
-                  style={{ color: "var(--primary)", textDecoration: "underline" }}
-                >
-                  Configure ta faculté
-                </a>{" "}
-                pour voir tes matières.
-              </p>
-            )}
+              Choisis une matière existante ou saisis une nouvelle.
+            </p>
           </div>
         </div>
 
